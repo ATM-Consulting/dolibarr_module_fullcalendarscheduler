@@ -1,18 +1,26 @@
 $(document).ready(function() {
-	
 	var fullcalendarscheduler_now = new Date();
 	var fullcalendarscheduler_date = ('0' + fullcalendarscheduler_now.getDate()).slice(-2);
 	var fullcalendarscheduler_month = ('0' + (fullcalendarscheduler_now.getMonth() + 1)).slice(-2);
 	var fullcalendarscheduler_today = fullcalendarscheduler_now.getFullYear()+'-'+fullcalendarscheduler_month+'-'+fullcalendarscheduler_date;
 	
+	var isLocaleFr = fullcalendarscheduler_initialLangCode == 'fr'; 
+	
+	
 	/* Debut Calendar du menu de Gauche */
 	$('#fullcalendar_scheduler_mini').fullCalendar({
+		monthNames: (isLocaleFr ? ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"] : ''),
+		//monthNamesShort: ["Janv", "Févr", "Mars", "Avr", "Mai", "Juin", "Juil", "Août", "Sept", "Oct", "Nov", "Déc"],
+	    //dayNames: ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+	    dayNamesShort: (isLocaleFr ? ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"] : ''),
+	    //dayNamesMin: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
 		header: {
 			schedulerLicenseKey: '0233290846-fcs-1478511282',
 			left: 'title',
 			center: 'prev,today,next',
 			right: ''
 		},
+		locale: fullcalendarscheduler_initialLangCode,
 		defaultDate: fullcalendarscheduler_today, // Must be yyyy-mm-dd
 		defaultView: 'month',
 		editable: false,
@@ -22,24 +30,45 @@ $(document).ready(function() {
 		}
 		
 	});
+	
 	/* Fin Calendar du menu de Gauche */
 	
-	console.log(fullcalendar_scheduler_resources_allowed);
+	
+	// TODO voir https://fullcalendar.io/docs/event_ui/ pour plus de détail sur les events
 	
 	/* Début Calendar centrale */
 	$('#fullcalendar_scheduler').fullCalendar({
+		monthNames: (isLocaleFr ? ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"] : ''),
+		slotLabelFormat: (isLocaleFr ? "HH:mm" : ''),
 		header: {
 			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
 			left: 'title',
-			center: 'prev,today,next',
-			right: ''
+			center: '',
+			right: 'prev,today,next'
 		},
+		locale: fullcalendarscheduler_initialLangCode,
 		defaultDate: fullcalendarscheduler_today, // Must be yyyy-mm-dd
 		defaultView: 'agendaDay',
 		editable: true,
 		selectable: true,
 		aspectRatio: 1.8,
+		eventOverlap: false,
+		defaultTimedEventDuration: '01:00:00',
+		businessHours: [
+			{ // Jours de semaines
+				dow: [ 1, 2, 3, 4, 5 ], // Lundi, Mardi, Mercredi, Jeudi, Vendredi
+				start: '08:00', // 8am
+				end: '18:00' // 6pm
+				//,constraint: 'available_hours' // TODO à voir comment marche la contrainte, actuellement tous les events peuvent être déplacés dans toutes les plages horaires => à voir si je restreint 
+			},
+			{ // Weekend
+				dow: [ 0, 6 ], // Dimanche, Samedi
+				start: '10:00', // 10am
+				end: '16:00' // 4pm
+			}
+		],
 		
+		// TODO vérifier que c'est utile le "agendaTwoDay"
 		views: {
 			agendaTwoDay: {
 				type: 'agenda',
@@ -57,33 +86,95 @@ $(document).ready(function() {
 		//// uncomment this line to hide the all-day slot
 		//allDaySlot: false,
 
-		resources: fullcalendar_scheduler_resources_allowed,
-		events: fullcalendar_scheduler_events_by_resource,
-		/*[
-			{ id: '1', resourceId: '1', start: '2016-11-06', end: '2016-11-08', title: 'event 1' },
-			{ id: '2', resourceId: '2', start: '2016-11-07T09:00:00', end: '2016-11-07T14:00:00', title: 'event 2' },
-			{ id: '3', resourceId: '3', start: '2016-11-07T12:00:00', end: '2016-11-08T06:00:00', title: 'event 3' },
-			{ id: '4', resourceId: '4', start: '2016-11-07T07:30:00', end: '2016-11-07T09:30:00', title: 'event 4' },
-			{ id: '5', resourceId: '4', start: '2016-11-07T10:00:00', end: '2016-11-07T15:00:00', title: 'event 5' }
-		],*/
+		resources: fullcalendar_scheduler_resources_allowed, // Tableau d'objet
+		events: fullcalendar_scheduler_events_by_resource, // Tableau d'objet
 
 		select: function(start, end, jsEvent, view, resource) {
 			console.log(
 				'select',
 				start.format(),
 				end.format(),
-				resource ? resource.id : '(no resource)'
+				resource ? 'ID res = '+resource.id : '(no resource)'
 			);
 		},
 		dayClick: function(date, jsEvent, view, resource) {
 			console.log(
 				'dayClick',
 				date.format(),
-				resource ? resource.id : '(no resource)'
+				resource ? 'ID res = '+resource.id : '(no resource)'
 			);
+		},
+		/*eventDragStart: function(event, jsEvent, ui, view) {
+			console.log('eventDragStart : ', event, jsEvent, ui, view);
+		},*/
+		/*eventDragStop: function(event, jsEvent, ui, view) {
+			console.log('eventDragStop : ', event, jsEvent, ui, view);
+		},*/
+		eventDrop: function(event, delta, revertFunc, jsEvent, ui, view) {
+			console.log('eventDrop called and delta is: '+delta.toString(), event);
+			
+			$.ajax({
+				url: fullcalendarscheduler_interface
+				,dataType: 'json'
+				,data: {
+					json: 1
+					,put: 'updateTimeSlotAndResource' // update crénau horaire et ressource associée
+					,event: {
+						id: event.id
+						,allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
+						,resourceId: event.resourceId
+						,fk_element_resource: event.fk_element_resource // il s'agit du rowid de la table "element_resources"
+						,start: event.start.format('YYYY-MM-DD HH:mm:ss')
+						,end: event.end !== null && event.end !== "undefined" ? event.end.format('YYYY-MM-DD HH:mm:ss') : ''
+						,deltaInSecond: delta.asSeconds()
+					}
+					,dateFrom: event.start.format('YYYY-MM-DD')
+				}
+				,
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
+				revertFunc();
+			}).done(function(response, textStatus, jqXHR) {
+				console.log('Done: ', response);
+			});
+			
+		},
+		/*eventResizeStart: function(event, jsEvent, ui, view) {
+			console.log('eventResizeStart : ', event, jsEvent, ui, view);
+		},
+		eventResizeStop: function(event, jsEvent, ui, view) {
+			console.log('eventResizeStop : ', event, jsEvent, ui, view);
+		},*/
+		eventResize: function(event, delta, revertFunc, jsEvent, ui, view) {
+			console.log('eventResize called and delta is: '+delta.toString(), event);
+			//console.log(delta.asSeconds());
+			
+			$.ajax({
+				url: fullcalendarscheduler_interface
+				,dataType: 'json'
+				,data: {
+					json: 1
+					,put: 'updateTimeSlot' // update crénau horaire
+					,event: {
+						id: event.id
+						//,allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
+						//,resourceId: event.resourceId
+						//,fk_element_resource: event.fk_element_resource // il s'agit du rowid de la table "element_resources"
+						,start: event.start.format('YYYY-MM-DD HH:mm:ss')
+						,end: event.end.format('YYYY-MM-DD HH:mm:ss')
+						,deltaInSecond: delta.asSeconds()
+					}
+					,dateFrom: event.start.format('YYYY-MM-DD')
+				}
+				,
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
+				revertFunc();
+			}).done(function(response, textStatus, jqXHR) {
+				console.log('Done: ', response);
+			});
+			
 		}
-		
-		
 		
 	});
 	/* Fin Calendar centrale */

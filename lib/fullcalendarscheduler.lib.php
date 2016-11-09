@@ -144,7 +144,7 @@ function getEventForResources($TRessource, $date='')
 	{
 		if (empty($date)) $date = date('Y-m-d');
 		
-		$sql = 'SELECT a.id as fk_actioncomm, er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, sp.civility, sp.lastname, sp.firstname, a.datep, a.datep2 ';
+		$sql = 'SELECT a.id as fk_actioncomm, er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, sp.civility, sp.lastname, sp.firstname, a.datep, a.datep2, a.fulldayevent, er.rowid as fk_element_resource ';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_resources er ON (er.element_id = a.id AND er.element_type = "action")';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'societe s ON (s.rowid = a.fk_soc)';
@@ -166,7 +166,8 @@ function getEventForResources($TRessource, $date='')
 				// Surtout ne pas mettre de clé en indice, si non, un json encode en sortie est foireux
 				$TEvent[] = array(
 					'id' => $obj->fk_actioncomm
-					,'resourceId' => $obj->fk_resource
+					,'resourceId' => $obj->resource_id
+					,'fk_element_resource' => $obj->fk_element_resource 
 					,'title' => $obj->label
 					,'desc' => $obj->note
 					,'fk_soc' => $obj->fk_soc
@@ -176,11 +177,8 @@ function getEventForResources($TRessource, $date='')
 					,'contact_firstname' => $obj->firstname
 					,'start' => !empty($obj->fulldayevent) ? dol_print_date($obj->datep, '%Y-%m-%d') : dol_print_date($obj->datep, '%Y-%m-%dT%H:%M:%S', 'gmt') // TODO
 					,'end' => !empty($obj->fulldayevent) ? dol_print_date($obj->datep2, '%Y-%m-%d') : dol_print_date($obj->datep2, '%Y-%m-%dT%H:%M:%S', 'gmt')
-					
+					,'allDay' => (boolean) $obj->fulldayevent // TODO à voir si on garde pour que l'event aparaisse en haut
 				);
-				
-				//	{ id: '1', resourceId: '1', start: '2016-11-06', end: '2016-11-08', title: 'event 1' },
-				//	{ id: '2', resourceId: '2', start: '2016-11-07T09:00:00', end: '2016-11-07T14:00:00', title: 'event 2' }
 				
 				$i++;
 			}
