@@ -11,14 +11,17 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
+dol_include_once('/fullcalendarscheduler/lib/fullcalendarscheduler.lib.php');
+
 $get = GETPOST('get', 'alpha');
 $put = GETPOST('put', 'alpha');
 
 $response = new interfaceResponse;
 
 switch ($get) {
-	case 'value':
-		
+	case 'getEventsFromDate':
+		_getEventsFromDate(GETPOST('dateFrom'));
+		__out( $response );
 		break;
 }
 
@@ -131,8 +134,30 @@ function _updateTimeSlot($event, $dateFrom)
 	}
 }
 
+/**
+ * Function qui retourne le nombre d'events d'un jour donné et ajout à la variable de retour les events 
+ * 
+ * @param $dateFrom	date	format Y-m-d
+ */
+function _getEventsFromDate($dateFrom)
+{
+	global $response;
+	
+	$TResource = getResourcesAllowed();
+	$TEvent = getEventForResources($TResource, $dateFrom);
+	
+	$response->data->TEvent = $TEvent;
+	
+	return count($TEvent);
+}
+
 class interfaceResponse {
 	public $TSuccess = array();
 	public $TErrors = array();
-	public $data = stdClass; // object qui contiendra des données pour le traitement côté JS
+	public $data; // object qui contiendra des données pour le traitement côté JS
+	
+	public function __construct()
+	{
+		$this->data = new stdClass;
+	}
 }

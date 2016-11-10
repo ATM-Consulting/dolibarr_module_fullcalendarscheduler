@@ -33,7 +33,6 @@ dol_fiche_head($head, 'perresource', $langs->trans('Agenda'), 0, 'action');
 echo '<div id="fullcalendar_scheduler"></div>';
 
 $TRessource = getResourcesAllowed();
-$TEvent = getEventForResources($TRessource);
 
 echo '
 <script type="text/javascript">
@@ -41,7 +40,6 @@ echo '
 	fullcalendarscheduler_initialLangCode = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_LOCALE_LANG) ? $conf->global->FULLCALENDARSCHEDULER_LOCALE_LANG : 'fr').'";
 
 	fullcalendar_scheduler_resources_allowed = '.json_encode($TRessource).';
-	fullcalendar_scheduler_events_by_resource = '.json_encode($TEvent).';
 	
 	fullcalendar_scheduler_businessHours_week_start = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_START) ? $conf->global->FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_START : '08:00').'";
 	fullcalendar_scheduler_businessHours_week_end = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_END) ? $conf->global->FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_END : '18:00').'";

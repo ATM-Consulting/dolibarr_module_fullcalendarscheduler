@@ -130,12 +130,12 @@ function getResourcesAllowed()
 	return $TRes;
 }
 
-function getEventForResources($TRessource, $date='')
+function getEventForResources($TResource, $date='')
 {
 	global $db;
 	
 	$TEvent = $TResId = array();
-	foreach ($TRessource as $l)
+	foreach ($TResource as &$l)
 	{
 		$TResId[] = $l['id'];
 	}
@@ -150,6 +150,7 @@ function getEventForResources($TRessource, $date='')
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'societe s ON (s.rowid = a.fk_soc)';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'socpeople sp ON (sp.rowid = a.fk_contact)';
 		$sql.= ' WHERE DATE_FORMAT(a.datep, "%Y-%m-%d") = "'.$date.'"';
+		$sql.= ' AND er.resource_id IN ('.implode(',', $TResId).')';
 		
 		dol_syslog("fulcalendarscheduler.lib.php::getResourcesAllowed", LOG_DEBUG);
 		$resql = $db->query($sql);

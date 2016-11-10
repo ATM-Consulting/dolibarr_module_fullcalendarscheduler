@@ -27,6 +27,8 @@ $(document).ready(function() {
 		aspectRatio: 0.5,
 		dayClick: function(date, jsEvent, view, resourceObj) {
 			console.log('dayClick then call ajax to reload big calendar', date.format(), resourceObj);
+			
+			// faire un .fullCalendar( 'gotoDate', year [, month, [ date ]] ) du grand calendrier
 		}
 		
 	});
@@ -87,7 +89,7 @@ $(document).ready(function() {
 		//allDaySlot: false,
 
 		resources: fullcalendar_scheduler_resources_allowed, // Tableau d'objet
-		events: fullcalendar_scheduler_events_by_resource, // Tableau d'objet
+		//events: fullcalendar_scheduler_events_by_resource, // Tableau d'objet
 
 		select: function(start, end, jsEvent, view, resource) {
 			console.log(
@@ -174,8 +176,29 @@ $(document).ready(function() {
 				console.log('Done: ', response);
 			});
 			
-		}
+		},
 		
+		viewRender: function( view, element ) {
+			console.log(view, element);
+			
+			$.ajax({
+				url: fullcalendarscheduler_interface
+				,dataType: 'json'
+				,data: {
+					json: 1
+					,get: 'getEventsFromDate' // get all event from date
+					,dateFrom: view.calendar.getDate().format('YYYY-MM-DD')
+				}
+				,
+			}).fail(function(jqXHR, textStatus, errorThrown) {
+				console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
+			}).done(function(response, textStatus, jqXHR) {
+				console.log('Done: ', response);
+				
+				view.calendar.removeEvents();
+				view.calendar.addEventSource(response.data.TEvent);
+			});
+		}
 	});
 	/* Fin Calendar centrale */
 	
