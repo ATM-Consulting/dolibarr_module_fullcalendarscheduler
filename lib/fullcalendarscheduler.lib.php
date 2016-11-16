@@ -147,6 +147,7 @@ function getEventForResources($TResource, $date='')
 		$sql = 'SELECT a.id as fk_actioncomm, er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, sp.civility, sp.lastname, sp.firstname, a.datep, a.datep2, a.fulldayevent, er.rowid as fk_element_resource ';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_resources er ON (er.element_id = a.id AND er.element_type = "action")';
+		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'resource r ON (er.resource_id = r.rowid)';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'societe s ON (s.rowid = a.fk_soc)';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'socpeople sp ON (sp.rowid = a.fk_contact)';
 		$sql.= ' WHERE DATE_FORMAT(a.datep, "%Y-%m-%d") = "'.$date.'"';

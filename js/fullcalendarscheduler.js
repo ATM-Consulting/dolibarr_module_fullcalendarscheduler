@@ -100,19 +100,70 @@ $(document).ready(function() {
 		//events: fullcalendar_scheduler_events_by_resource, // Tableau d'objet
 
 		select: function(start, end, jsEvent, view, resource) {
-			console.log(
-				'select',
-				start.format(),
-				end.format(),
-				resource ? 'ID res = '+resource.id : '(no resource)'
-			);
+			console.log('select called: ', start.format(), resource ? 'ID res = '+resource.id : '(no resource)');
+			
+			var date = start.format('YYYY-MM-DD');
+			
+			var hour_start = start.format('HH');
+			var minute_start = start.format('mm');
+			
+			start.add(1, 'hour');
+			
+			var hour_end = start.format('HH');
+			var minute_end = start.format('mm');
+			
+			// show form
+			//$('#form_add_event').show();
+			fullcalendarscheduler_div.dialog({
+				modal: true
+				,width: 'auto'
+				,title: fullcalendarscheduler_title_dialog_create_event
+				,buttons: [
+					{
+						text: fullcalendarscheduler_button_dialog_add
+						,icons: { primary: "ui-icon-check" }
+						,click: function() {
+							/**
+							 * Ajax call to create event with json return to add the new event into calendar 
+							 */
+							// si valide 
+								// create event
+								// add event to calendar
+								// close form
+							// si non valide
+								// champ en erreur en retour
+							// si annuler
+								// close form
+							$( this ).dialog( "close" );
+						}
+					},
+					{
+						text: fullcalendarscheduler_button_dialog_cancel
+						,icons: { primary: "ui-icon-close" }
+						,click: function() {
+							$( this ).dialog( "close" );
+						}
+					}
+				]
+				,open: function( event, ui ) {
+					$('#date_start').val(date);
+					dpChangeDay('date_start', fullcalendarscheduler_date_format);
+					$('#date_end').val(date);
+					dpChangeDay('date_end', fullcalendarscheduler_date_format);
+					
+					$('#date_starthour').val(hour_start);
+					$('#date_startmin').val(minute_start);
+					
+					$('#date_endhour').val(hour_end);
+					$('#date_endmin').val(minute_end);
+					
+					fullcalendarscheduler_div.find('#fk_resource').val(resource.id).trigger('change');
+				}
+			});
+			
 		},
 		dayClick: function(date, jsEvent, view, resource) {
-			console.log(
-				'dayClick',
-				date.format(),
-				resource ? 'ID res = '+resource.id : '(no resource)'
-			);
+			console.log('dayClick called: ', date.format(), resource ? 'ID res = '+resource.id : '(no resource)');
 		},
 		/*eventDragStart: function(event, jsEvent, ui, view) {
 			console.log('eventDragStart : ', event, jsEvent, ui, view);

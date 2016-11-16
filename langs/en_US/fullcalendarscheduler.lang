@@ -15,3 +15,7 @@ FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_START=Work hour begin in week (a backgr
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_END=Work hour end in week (a background is applied on non work hours)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_START=Work hour begin in weekend (a background is applied on non work hours)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END=Work hour begin in weekend (a background is applied on non work hours)
+
+fullcalendarscheduler_title_dialog_create_event=Create event
+fullcalendarscheduler_button_dialog_add=Add
+fullcalendarscheduler_button_dialog_cancel=Cancel

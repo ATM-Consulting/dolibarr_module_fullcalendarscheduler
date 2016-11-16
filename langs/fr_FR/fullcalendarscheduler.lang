@@ -15,3 +15,7 @@ FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_START=Heure de début de travail en sem
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_END=Heure de fin de travail en semaine (ceci n'est qu'à titre informatif, un léger voile gris sera appliqué sur les tranches horaires non travaillées)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_START=Heure de début de travail en week-end (ceci n'est qu'à titre informatif, un léger voile gris sera appliqué sur les tranches horaires non travaillées)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END=Heure de fin de travail en week-end (ceci n'est qu'à titre informatif, un léger voile gris sera appliqué sur les tranches horaires non travaillées)
+
+fullcalendarscheduler_title_dialog_create_event=Créer un événement
+fullcalendarscheduler_button_dialog_add=Ajouter
+fullcalendarscheduler_button_dialog_cancel=Annuler
