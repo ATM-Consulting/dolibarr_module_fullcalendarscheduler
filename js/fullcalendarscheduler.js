@@ -26,13 +26,21 @@ $(document).ready(function() {
 		editable: false,
 		aspectRatio: 0.5,
 		dayClick: function(date, jsEvent, view, resourceObj) {
-			console.log('dayClick then call ajax to reload big calendar', date.format(), resourceObj);
-			
-			// faire un .fullCalendar( 'gotoDate', year [, month, [ date ]] ) du grand calendrier
+			console.log('dayClick event called and gotoDate is triggered to', date.format());
+			$('#fullcalendar_scheduler').fullCalendar('gotoDate', date);
+		},
+		eventAfterAllRender: function( view ) {
+			// Force enable "today" button
+			$('#fullcalendar_scheduler_mini .fc-today-button').removeClass('fc-state-disabled');
+			$('#fullcalendar_scheduler_mini .fc-today-button').prop('disabled', false);
 		}
 		
 	});
 	
+	$('#fullcalendar_scheduler_mini .fc-today-button').click(function() {
+		console.log('today button is triggered on mini calendar');
+		$('#fullcalendar_scheduler').fullCalendar('today');
+	});
 	/* Fin Calendar du menu de Gauche */
 	
 	
@@ -179,7 +187,7 @@ $(document).ready(function() {
 		},
 		
 		viewRender: function( view, element ) {
-			console.log(view, element);
+			console.log('viewRender called: ', view, element);
 			
 			$.ajax({
 				url: fullcalendarscheduler_interface
@@ -193,7 +201,7 @@ $(document).ready(function() {
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
 			}).done(function(response, textStatus, jqXHR) {
-				console.log('Done: ', response);
+				console.log('viewRender Done: ', response);
 				
 				view.calendar.removeEvents();
 				view.calendar.addEventSource(response.data.TEvent);
