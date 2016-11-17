@@ -1,4 +1,12 @@
 $(document).ready(function() {
+	var fullcalendarscheduler_mouseDown = false;
+	document.body.onmousedown = function() { 
+		fullcalendarscheduler_mouseDown = true;
+	}
+	document.body.onmouseup = function() {
+		fullcalendarscheduler_mouseDown = false;
+	}
+	
 	var fullcalendarscheduler_now = new Date();
 	var fullcalendarscheduler_date = ('0' + fullcalendarscheduler_now.getDate()).slice(-2);
 	var fullcalendarscheduler_month = ('0' + (fullcalendarscheduler_now.getMonth() + 1)).slice(-2);
@@ -292,18 +300,44 @@ $(document).ready(function() {
 				view.calendar.removeEvents();
 				view.calendar.addEventSource(response.data.TEvent);
 			});
-		}/*,
-		eventRender: function(event, element) {
-			element.qtip({
-				content: {
-					title: event.title + " (" + event.action_code + ")" ,
-					text: event.description
-				},
-				position: {
-					at: "bottomLeft"
+		},
+		eventRender: function(event, element, view) {
+			console.log('eventRender => ', element, event, view);
+			
+			// TODO à finaliser avec un petit picto et l'action associée => reste encore à définir
+			var link_a = '<a title="action 1" href="#">A</a>';
+			var link_b = '<a title="action 2" href="#">B</a>';
+			var link_c = '<a title="action 3" href="#">C</a>';
+			element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+link_b+' '+link_c+'</div>');
+			
+			element.find('.fc-content').append('<div class="link_thirdparty">'+event.link_company+'</div>');
+			element.find('.fc-content').append('<div class="link_contact">'+event.link_contact+'</div>');
+			
+			element.find('.link_thirdparty a, .link_contact a').attr('title', '');
+			element.find('.fc-content a').css('color', '#fff');
+			
+		},
+		eventAfterAllRender: function (view) {
+			// Pour un peu plus de confort pour éviter de bataillé avec l'adaptation de la hauteur du bloc sur le hover qui suit
+			$('.fc-resizer').css('height', '12px');
+			
+			$('.fc-content').hover(function(jsEvent) {
+				if (!fullcalendarscheduler_mouseDown)
+				{
+					var target = $(this).parent();
+					var origin_height = parseInt(target.css('height'));
+					target.data('originHeight', origin_height);
+					
+					if (origin_height < parseInt($(this).css('height'))) target.css('height', parseInt($(this).css('height'))+10);
+				}
+			}, function(jsEvent) {
+				if (!fullcalendarscheduler_mouseDown)
+				{
+					var target = $(this).parent();
+					target.css('height', target.data('originHeight'));
 				}
 			});
-		},*/
+		}
 	});
 	/* Fin Calendar centrale */
 	

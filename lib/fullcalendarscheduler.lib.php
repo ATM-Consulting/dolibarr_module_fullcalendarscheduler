@@ -150,7 +150,7 @@ function getEventForResources($TResource, $date='')
 	{
 		if (empty($date)) $date = date('Y-m-d');
 		
-		$sql = 'SELECT a.id as fk_actioncomm, er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, sp.civility, sp.lastname, sp.firstname, a.datep, a.datep2, a.fulldayevent, er.rowid as fk_element_resource ';
+		$sql = 'SELECT a.id as fk_actioncomm, er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, sp.rowid as fk_socpeople, sp.civility, sp.lastname, sp.firstname, a.datep, a.datep2, a.fulldayevent, er.rowid as fk_element_resource ';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_resources er ON (er.element_id = a.id AND er.element_type = "action")';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'resource r ON (er.resource_id = r.rowid)';
@@ -163,6 +163,9 @@ function getEventForResources($TResource, $date='')
 		$resql = $db->query($sql);
 		if ($resql)
 		{
+			$societe = new Societe($db);
+			$contact = new Contact($db);
+			
 			$num = $db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
@@ -170,6 +173,13 @@ function getEventForResources($TResource, $date='')
 				$obj = $db->fetch_object($resql);
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				//$label=($langs->trans("ResourceTypeShort".$obj->code)!=("ResourceTypeShort".$obj->code)?$langs->trans("ResourceTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
+				
+				$societe->id = $obj->fk_soc;
+				$societe->nom = $societe->name = $obj->company_name;
+				
+				$contact->id = $obj->fk_socpeople;
+				$contact->firstname = $obj->firstname;
+				$contact->lastname = $obj->lastname;
 				
 				// Surtout ne pas mettre de clé en indice, si non, un json encode en sortie est foireux
 				$TEvent[] = array(
@@ -180,9 +190,12 @@ function getEventForResources($TResource, $date='')
 					,'desc' => $obj->note
 					,'fk_soc' => $obj->fk_soc
 					,'company_name' => $obj->company_name
+					,'link_company' => !empty($societe->id) ? $societe->getNomUrl(1) : ''
+					,'fk_socpeople' => $obj->fk_socpeople
 					,'contact_civility' => $obj->civility
 					,'contact_lastname' => $obj->lastname
 					,'contact_firstname' => $obj->firstname
+					,'link_contact' => !empty($contact->id) ? $contact->getNomUrl(1) : ''
 					,'start' => !empty($obj->fulldayevent) ? dol_print_date($obj->datep, '%Y-%m-%d') : dol_print_date($obj->datep, '%Y-%m-%dT%H:%M:%S', 'gmt') // TODO
 					,'end' => !empty($obj->fulldayevent) ? dol_print_date($obj->datep2, '%Y-%m-%d') : dol_print_date($obj->datep2, '%Y-%m-%dT%H:%M:%S', 'gmt')
 					,'allDay' => (boolean) $obj->fulldayevent // TODO à voir si on garde pour que l'event aparaisse en haut

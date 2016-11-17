@@ -17,7 +17,7 @@ $result = restrictedArea($user, 'agenda', 0, '', 'allactions');
 
 $morejs = array(
 	'/fullcalendarscheduler/js/moment.min.js'
-	,'/fullcalendarscheduler/js/fullcalendar.min.js'
+	,'/fullcalendarscheduler/js/fullcalendar.js'
 	,'/fullcalendarscheduler/js/scheduler.min.js' // TODO swap for scheduler.min.js
 	,'/fullcalendarscheduler/js/fullcalendarscheduler.js'
 	,'/fullcalendarscheduler/js/langs/lang-all.js'
@@ -97,9 +97,9 @@ echo '
 	fullcalendarscheduler_button_dialog_add = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_add').'";
 	fullcalendarscheduler_button_dialog_cancel = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_cancel').'";
 	
-	var fullcalendarscheduler_date_format = "'.$langs->trans("FormatDateShortJavaInput").'";
+	fullcalendarscheduler_date_format = "'.$langs->trans("FormatDateShortJavaInput").'";
 	
-	var fullcalendarscheduler_div = $(\'<div id="form_add_event"></div>\');
+	fullcalendarscheduler_div = $(\'<div id="form_add_event"></div>\');
 	fullcalendarscheduler_div	.append("<p>"+'.json_encode($select_type_action).'+"</p>")
 								.append("<p>"+'.json_encode($input_title_action).'+"</p>")
 								.append("<p>"+'.json_encode($select_date_start).'+"</p>")
@@ -111,6 +111,16 @@ echo '
 								.append("<p>"+'.json_encode($select_resource).'+"</p>");
 								
 </script>';
+
+echo '
+<style type="text/css">
+	#fullcalendar_scheduler .ajaxtool {
+		position:absolute;
+		top:1px;
+		right:2px;
+	}
+</style>
+';
 
 dol_fiche_end();
 llxFooter();
