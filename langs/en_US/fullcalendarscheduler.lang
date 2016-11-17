@@ -15,6 +15,8 @@ FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_START=Work hour begin in week (a backgr
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_END=Work hour end in week (a background is applied on non work hours)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_START=Work hour begin in weekend (a background is applied on non work hours)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END=Work hour begin in weekend (a background is applied on non work hours)
+FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION=Default duration for event (by default 01:00:00)
+FULLCALENDARSCHEDULER_SNAP_DURATION=Slot granularity (by default 00:30:00, events can be moved by 30 minutes bloc)
 
 fullcalendarscheduler_title_dialog_create_event=Create event
 fullcalendarscheduler_button_dialog_add=Add

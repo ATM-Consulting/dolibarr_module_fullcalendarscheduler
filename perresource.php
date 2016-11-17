@@ -84,6 +84,8 @@ echo '
 <script type="text/javascript">
 	fullcalendarscheduler_interface = "'.dol_buildpath('/fullcalendarscheduler/script/interface.php', 1).'";
 	fullcalendarscheduler_initialLangCode = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_LOCALE_LANG) ? $conf->global->FULLCALENDARSCHEDULER_LOCALE_LANG : 'fr').'";
+	fullcalendarscheduler_defaultTimedEventDuration = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION) ? $conf->global->FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION : '01:00:00').'";
+	fullcalendarscheduler_snapDuration = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_SNAP_DURATION) ? $conf->global->FULLCALENDARSCHEDULER_SNAP_DURATION : '00:30:00').'";
 
 	fullcalendar_scheduler_resources_allowed = '.json_encode($TRessource).';
 	

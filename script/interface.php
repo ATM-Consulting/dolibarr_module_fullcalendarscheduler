@@ -97,7 +97,7 @@ function _updateResourceLinked($fk_element_resource, $ressourceId)
  */
 function _updateTimeSlot($event, $dateFrom)
 {
-	global $db,$langs,$user,$response;
+	global $db,$langs,$user,$response,$conf;
 	
 	$actioncomm = new ActionComm($db);
 	if ($actioncomm->fetch($event->id) > 0)
@@ -118,7 +118,15 @@ function _updateTimeSlot($event, $dateFrom)
 			$actioncomm->datep = dol_mktime(date('H', $timep), date('i', $timep), 0, date('m', $timep), date('d', $timep), date('Y', $timep));
 			
 			if (!empty($event->end)) $timef = strtotime($event->end);
-			else $timef = $timep + 3600; // Heure début + 1h car l'attribut "defaultTimedEventDuration" est paramétré sur 1h
+			else
+			{
+				$TDuration = explode(':', $conf->global->FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION);
+				if (empty($TDuration)) $TDuration = array(1, 0, 0); // correspond à 1 heure, 0 minute, 0 seconde (format fullcalendar peut laisser perplexe)
+				
+				$timef += (int) $TDuration[0] * 3600;
+				$timef += (int) $TDuration[1] * 60;
+				//$timef += (int) $TDuration[2]; // les secondes on s'en tape 
+			}
 			
 			$actioncomm->datef = dol_mktime(date('H', $timef), date('i', $timef), 0, date('m', $timef), date('d', $timef), date('Y', $timef));
 		}

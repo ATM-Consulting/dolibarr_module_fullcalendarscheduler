@@ -71,7 +71,8 @@ $(document).ready(function() {
 		selectable: true,
 		aspectRatio: 1.8,
 		eventOverlap: false,
-		defaultTimedEventDuration: '01:00:00',
+		defaultTimedEventDuration: fullcalendarscheduler_defaultTimedEventDuration,
+		snapDuration: fullcalendarscheduler_snapDuration,
 		businessHours: [
 			{ // Jours de semaines
 				dow: [ 1, 2, 3, 4, 5 ], // Lundi, Mardi, Mercredi, Jeudi, Vendredi
@@ -120,9 +121,7 @@ $(document).ready(function() {
 						text: fullcalendarscheduler_button_dialog_add
 						,icons: { primary: "ui-icon-check" }
 						,click: function() {
-							/**
-							 * Ajax call to create event with json return to add the new event into calendar 
-							 */
+							
 							self = this;
 							
 							$.ajax({
@@ -187,7 +186,8 @@ $(document).ready(function() {
 					var hour_start = start.format('HH');
 					var minute_start = start.format('mm');
 					
-					start.add(1, 'hour');
+					var duration = moment.duration(fullcalendarscheduler_defaultTimedEventDuration);
+					start.add(duration);
 					
 					var hour_end = start.format('HH');
 					var minute_end = start.format('mm');
@@ -302,8 +302,6 @@ $(document).ready(function() {
 			});
 		},
 		eventRender: function(event, element, view) {
-			console.log('eventRender => ', element, event, view);
-			
 			// TODO à finaliser avec un petit picto et l'action associée => reste encore à définir
 			var link_a = '<a title="action 1" href="#">A</a>';
 			var link_b = '<a title="action 2" href="#">B</a>';
