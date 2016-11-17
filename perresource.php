@@ -49,7 +49,7 @@ ob_start();
 $formactions->select_type_actions(-1, 'type_code', 'systemauto');
 $select_type_action .= ob_get_clean();
 
-$input_title_action = '<input type="text" name="label" placeholder="'.$langs->transnoentitiesnoconv('title').'" style="width:300px" />';
+$input_title_action = '<input type="text" name="label" placeholder="'.$langs->transnoentitiesnoconv('Title').'" style="width:300px" />';
 
 // on intègre la notion de fulldayevent ??? $langs->trans("EventOnFullDay")   <input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').' />
 ob_start();
@@ -62,7 +62,12 @@ echo '<label>'.$langs->trans("DateActionEnd").'</label> ';
 $form->select_date(null,'date_end',1,1,1,"action",1,1,0,0,'fulldayend');
 $select_date_end = ob_get_clean();
 
-$input_note = '<textarea name="note" value="" placeholder="'.$langs->trans('Note').'" rows="3" class="minwidth300"></textarea>';
+/*
+require_once DOL_DOCUMENT_ROOT.'/core/class/doleditor.class.php';
+$doleditor=new DolEditor('note',(GETPOST('note')?GETPOST('note'):$object->note),'',180,'dolibarr_notes','In',true,true,$conf->fckeditor->enabled,ROWS_6,90);
+$doleditor->Create();
+*/
+$input_note = '<textarea name="note" value="" placeholder="'.$langs->trans('Description').'" rows="3" class="minwidth300"></textarea>';
 $options = array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')));
 $select_company = '<label for="fk_soc">'.$langs->transnoentitiesnoconv('Company').'</label>'.$form->select_company('', 'fk_soc', '', 1, 0, 0, $options, 0, 'minwidth300');
 

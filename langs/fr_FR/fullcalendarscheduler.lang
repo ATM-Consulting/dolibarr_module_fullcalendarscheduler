@@ -19,3 +19,12 @@ FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END=Heure de fin de travail en week-
 fullcalendarscheduler_title_dialog_create_event=Créer un événement
 fullcalendarscheduler_button_dialog_add=Ajouter
 fullcalendarscheduler_button_dialog_cancel=Annuler
+
+
+fullcalendarscheduler_create_event_type_code_empty=Type de l'événement manquant
+fullcalendarscheduler_create_event_label_empty=Titre manquant
+fullcalendarscheduler_create_event_fk_soc_empty=Aucune société de renseigné
+fullcalendarscheduler_create_event_fk_user_empty=Aucun utilisateur associé
+fullcalendarscheduler_create_event_fk_resource_empty=Aucune ressource de renseigné
+fullcalendarscheduler_create_event_date_start_invalid=Format date de début invalide : %s
+fullcalendarscheduler_create_event_date_end_invalid=Format date de fin invalide : %s

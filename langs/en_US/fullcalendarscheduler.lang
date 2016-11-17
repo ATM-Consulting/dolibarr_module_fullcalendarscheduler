@@ -19,3 +19,12 @@ FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END=Work hour begin in weekend (a ba
 fullcalendarscheduler_title_dialog_create_event=Create event
 fullcalendarscheduler_button_dialog_add=Add
 fullcalendarscheduler_button_dialog_cancel=Cancel
+
+
+fullcalendarscheduler_create_event_type_code_empty=Event type missing
+fullcalendarscheduler_create_event_label_empty=Title missing
+fullcalendarscheduler_create_event_fk_soc_empty=No third party selected
+fullcalendarscheduler_create_event_fk_user_empty=No user associated
+fullcalendarscheduler_create_event_fk_resource_empty=No resource selected
+fullcalendarscheduler_create_event_date_start_invalid=Date start format invalid: %s
+fullcalendarscheduler_create_event_date_end_invalid=Date end format invalid: %s

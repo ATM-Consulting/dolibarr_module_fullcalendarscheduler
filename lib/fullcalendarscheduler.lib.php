@@ -118,6 +118,7 @@ function getResourcesAllowed()
 				//$label=($langs->trans("ResourceTypeShort".$obj->code)!=("ResourceTypeShort".$obj->code)?$langs->trans("ResourceTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
 				// Surtout ne pas mettre de clé en indice, si non, un json encode en sortie est foireux
 				$TRes[] = array('id' => $obj->fk_resource, 'title' => $obj->ref, 'code' => $obj->code, 'eventColor' => random_color());
+				
 				$i++;
 			}
 		}
@@ -130,6 +131,11 @@ function getResourcesAllowed()
 	return $TRes;
 }
 
+/**
+ * Retourne les événements pour les ressources données et pour une date 
+ * 
+ * @param $date 	date 	format Y-m-d
+ */
 function getEventForResources($TResource, $date='')
 {
 	global $db;

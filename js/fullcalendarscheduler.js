@@ -102,18 +102,7 @@ $(document).ready(function() {
 		select: function(start, end, jsEvent, view, resource) {
 			console.log('select called: ', start.format(), resource ? 'ID res = '+resource.id : '(no resource)');
 			
-			var date = start.format('YYYY-MM-DD');
-			
-			var hour_start = start.format('HH');
-			var minute_start = start.format('mm');
-			
-			start.add(1, 'hour');
-			
-			var hour_end = start.format('HH');
-			var minute_end = start.format('mm');
-			
 			// show form
-			//$('#form_add_event').show();
 			fullcalendarscheduler_div.dialog({
 				modal: true
 				,width: 'auto'
@@ -126,26 +115,75 @@ $(document).ready(function() {
 							/**
 							 * Ajax call to create event with json return to add the new event into calendar 
 							 */
-							// si valide 
-								// create event
-								// add event to calendar
-								// close form
-							// si non valide
-								// champ en erreur en retour
-							// si annuler
-								// close form
-							$( this ).dialog( "close" );
+							self = this;
+							
+							$.ajax({
+								url: fullcalendarscheduler_interface
+								,dataType: 'json'
+								,data: {
+									json: 1
+									,put: 'createEvent'
+									,TParam: {
+										type_code: $('#type_code').val()
+										,label: $('#form_add_event input[name=label]').val()
+										//allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
+										,date_start: $('#date_startyear').val()+'-'+$('#date_startmonth').val()+'-'+$('#date_startday').val()+' '+$('#date_starthour').val()+':'+$('#date_startmin').val()+':00'
+										,date_end: $('#date_startyear').val()+'-'+$('#date_startmonth').val()+'-'+$('#date_startday').val()+' '+$('#date_starthour').val()+':'+$('#date_startmin').val()+':00'
+										,note: $('#form_add_event textarea[name=note]').val()
+										,fk_soc: $('#fk_soc').val()
+										,contactid: $('#contactid').val()
+										,fk_user: $('#fk_user').val()
+										,fk_resource: $('#fk_resource').val()
+									}
+									,dateFrom: view.start.format('YYYY-MM-DD')
+								}
+								,
+							}).fail(function(jqXHR, textStatus, errorThrown) {
+								console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
+								$( self ).dialog( "close" );
+							}).done(function(response, textStatus, jqXHR) {
+								console.log('Done: ', response);
+
+								if (response.TError.length > 0)
+								{
+									for (var x in response.TError)
+									{
+										$.jnotify(response.TError[x], 'error');
+									}
+								}
+								else
+								{
+									view.calendar.removeEvents();
+									view.calendar.addEventSource(response.data.TEvent);
+									
+									$( self ).dialog( 'close' );
+								}
+								
+							});
+							
+							
 						}
 					},
 					{
 						text: fullcalendarscheduler_button_dialog_cancel
-						,icons: { primary: "ui-icon-close" }
+						,icons: { primary: 'ui-icon-close' }
 						,click: function() {
-							$( this ).dialog( "close" );
+							$( this ).dialog( 'close' );
 						}
 					}
 				]
 				,open: function( event, ui ) {
+					// Format en majuscule pour l'objet moment() si non il renvoie le mauvais format
+					var date = start.format(fullcalendarscheduler_date_format.toUpperCase());
+					
+					var hour_start = start.format('HH');
+					var minute_start = start.format('mm');
+					
+					start.add(1, 'hour');
+					
+					var hour_end = start.format('HH');
+					var minute_end = start.format('mm');
+					
 					$('#date_start').val(date);
 					dpChangeDay('date_start', fullcalendarscheduler_date_format);
 					$('#date_end').val(date);
@@ -218,9 +256,6 @@ $(document).ready(function() {
 					,put: 'updateTimeSlot' // update crénau horaire
 					,event: {
 						id: event.id
-						//,allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
-						//,resourceId: event.resourceId
-						//,fk_element_resource: event.fk_element_resource // il s'agit du rowid de la table "element_resources"
 						,start: event.start.format('YYYY-MM-DD HH:mm:ss')
 						,end: event.end.format('YYYY-MM-DD HH:mm:ss')
 						,deltaInSecond: delta.asSeconds()
@@ -257,7 +292,18 @@ $(document).ready(function() {
 				view.calendar.removeEvents();
 				view.calendar.addEventSource(response.data.TEvent);
 			});
-		}
+		}/*,
+		eventRender: function(event, element) {
+			element.qtip({
+				content: {
+					title: event.title + " (" + event.action_code + ")" ,
+					text: event.description
+				},
+				position: {
+					at: "bottomLeft"
+				}
+			});
+		},*/
 	});
 	/* Fin Calendar centrale */
 	
