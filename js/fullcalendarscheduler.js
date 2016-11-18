@@ -315,7 +315,7 @@ $(document).ready(function() {
 			element.find('.fc-content').append('<div class="link_contact">'+event.link_contact+'</div>');
 			
 			element.find('.link_thirdparty a, .link_contact a').attr('title', '');
-			element.find('.fc-content a').css('color', '#fff');
+			element.find('.fc-content a').css('color', element.css('color'));
 			
 		},
 		eventAfterAllRender: function (view) {
