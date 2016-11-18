@@ -23,7 +23,7 @@ $(document).ready(function() {
 	    dayNamesShort: (isLocaleFr ? ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"] : ''),
 	    //dayNamesMin: ["Di", "Lu", "Ma", "Me", "Je", "Ve", "Sa"],
 		header: {
-			schedulerLicenseKey: '0233290846-fcs-1478511282',
+			schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
 			left: 'title',
 			center: 'prev,today,next',
 			right: ''
