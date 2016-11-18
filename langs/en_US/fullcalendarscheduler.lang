@@ -17,6 +17,9 @@ FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_START=Work hour begin in weekend (a 
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END=Work hour begin in weekend (a background is applied on non work hours)
 FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION=Default duration for event (by default 01:00:00)
 FULLCALENDARSCHEDULER_SNAP_DURATION=Slot granularity (by default 00:30:00, events can be moved by 30 minutes bloc)
+FULLCALENDARSCHEDULER_ASPECT_RATIO=Display ratio (modify the visible height of the calendar, default value: 1.6)
+FULLCALENDARSCHEDULER_MIN_TIME=Display start hour of the calendar (default value: 00:00)
+FULLCALENDARSCHEDULER_MAX_TIME=Display end hour of the calendar (default value: 23:00)
 
 fullcalendarscheduler_title_dialog_create_event=Create event
 fullcalendarscheduler_button_dialog_add=Add

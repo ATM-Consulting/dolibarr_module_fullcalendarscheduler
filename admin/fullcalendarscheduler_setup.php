@@ -212,6 +212,46 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("FULLCALENDARSCHEDULER_ASPECT_RATIO").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_FULLCALENDARSCHEDULER_ASPECT_RATIO">';
+print '<input name="FULLCALENDARSCHEDULER_ASPECT_RATIO" type="text" value="'.$conf->global->FULLCALENDARSCHEDULER_ASPECT_RATIO.'" placeholder="1.6" />';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("FULLCALENDARSCHEDULER_MIN_TIME").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_FULLCALENDARSCHEDULER_MIN_TIME">';
+print '<input name="FULLCALENDARSCHEDULER_MIN_TIME" type="text" value="'.$conf->global->FULLCALENDARSCHEDULER_MIN_TIME.'" placeholder="00:00" />';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("FULLCALENDARSCHEDULER_MAX_TIME").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_FULLCALENDARSCHEDULER_MAX_TIME">';
+print '<input name="FULLCALENDARSCHEDULER_MAX_TIME" type="text" value="'.$conf->global->FULLCALENDARSCHEDULER_MAX_TIME.'" placeholder="23:00" />';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+
 /*
 $var=!$var;
 print '<tr '.$bc[$var].'>';

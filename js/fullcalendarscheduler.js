@@ -2,10 +2,10 @@ $(document).ready(function() {
 	var fullcalendarscheduler_mouseDown = false;
 	document.body.onmousedown = function() { 
 		fullcalendarscheduler_mouseDown = true;
-	}
+	};
 	document.body.onmouseup = function() {
 		fullcalendarscheduler_mouseDown = false;
-	}
+	};
 	
 	var fullcalendarscheduler_now = new Date();
 	var fullcalendarscheduler_date = ('0' + fullcalendarscheduler_now.getDate()).slice(-2);
@@ -69,7 +69,9 @@ $(document).ready(function() {
 		defaultView: 'agendaDay',
 		editable: true,
 		selectable: true,
-		aspectRatio: 1.8,
+		aspectRatio: fullcalendarscheduler_aspectRatio,
+		minTime: fullcalendarscheduler_minTime, // default 00:00
+		maxTime: fullcalendarscheduler_maxTime, // default 23:00
 		eventOverlap: false,
 		defaultTimedEventDuration: fullcalendarscheduler_defaultTimedEventDuration,
 		snapDuration: fullcalendarscheduler_snapDuration,
