@@ -303,9 +303,10 @@ $(document).ready(function() {
 		},
 		eventRender: function(event, element, view) {
 			// TODO à finaliser avec un petit picto et l'action associée => reste encore à définir
-			var link_a = '<a title="action 1" href="#">A</a>';
-			var link_b = '<a title="action 2" href="#">B</a>';
-			var link_c = '<a title="action 3" href="#">C</a>';
+			//console.log(event);
+			var link_a = '<a title="action 1" href="javascript:action_a('+event.id+');">A</a>';
+			var link_b = '<a title="action 2" href="javascript:action_b('+event.id+');">B</a>';
+			var link_c = '<a title="action 3" href="javascript:action_c('+event.id+');">C</a>';
 			element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+link_b+' '+link_c+'</div>');
 			
 			element.find('.fc-content').append('<div class="link_thirdparty">'+event.link_company+'</div>');
@@ -339,4 +340,31 @@ $(document).ready(function() {
 	});
 	/* Fin Calendar centrale */
 	
+	action_a = function(id)
+	{
+		alert('Update rapide de l\'event');
+		var view = $('#fullcalendar_scheduler').fullCalendar('getView');
+		console.log("view = >", view);
+		
+		var event = $("#fullcalendar_scheduler").fullCalendar( 'clientEvents', id );
+		console.log("event => ", event);
+		
+		//view.calendar.removeEvents(id);
+		//view.calendar.addEventSource(event);
+	};
+	
+	action_b = function(id)
+	{
+		alert('Suppression de l\'event (reste à faire l\'appel ajax)');
+		
+		var view = $('#fullcalendar_scheduler').fullCalendar('getView');
+		view.calendar.removeEvents(id);
+		console.log("view = >", view);
+	};
+
+
+	action_c = function(id)
+	{
+		alert('Reste à faire');
+	};
 });
