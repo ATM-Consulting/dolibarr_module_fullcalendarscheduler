@@ -102,6 +102,7 @@ function _updateTimeSlot($event, $dateFrom)
 	$actioncomm = new ActionComm($db);
 	if ($actioncomm->fetch($event->id) > 0)
 	{
+		$actioncomm->fetch_userassigned();
 		if (!empty($event->allDay))
 		{
 			$timeFrom = strtotime($dateFrom);
@@ -212,7 +213,7 @@ function _createEvent($TParam, $dateFrom)
 	if (!empty($TParam['contactid'])) $actioncomm->contact->fetch($TParam['contactid']);
 	
 	$actioncomm->userownerid = $TParam['fk_user'];
-	$actioncomm->userassigned[] = array('id'=>$TParam['fk_user'], 'transparency'=>0);
+	//$actioncomm->userassigned[] = array('id'=>$TParam['fk_user'], 'transparency'=>0); // Facultatif, la methode create fait la même chose
 	
 	
 	// Autres params que je n'utilise pas
