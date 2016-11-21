@@ -96,6 +96,7 @@ function getResourcesAllowed()
 	global $db,$conf;
 	
 	$TRes = array();
+	$TBgColor = array('#AD5C47', '#47B4A7', '#C8445E', '#438386', '#CB44B9', '#4D9241', '#444D99', '#4447A1', '#654399', '#BC4AE9', '#98A144');
 	
 	if (!empty($conf->global->FULLCALENDAR_SCHEDULER_RESOURCES_TYPE_ALLOWED))
 	{
@@ -112,19 +113,21 @@ function getResourcesAllowed()
 			dol_include_once('/fullcalendarscheduler/class/randomColor.class.php');
 			
 			$num = $db->num_rows($resql);
-			$i = 0;
+			$i = $j = 0;
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
-				$bgColor = RandomColor::one(array('luminosity'=>'dark'));
+				//$bgColor = RandomColor::one(array('luminosity'=>'dark'));
+				if (empty($TBgColor[$j])) $j = 0;
+				$bgColor = $TBgColor[$j];
 				
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				//$label=($langs->trans("ResourceTypeShort".$obj->code)!=("ResourceTypeShort".$obj->code)?$langs->trans("ResourceTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
 				// Surtout ne pas mettre de clé en indice, si non, un json encode en sortie est foireux
-				//$TRes[] = array('id' => $obj->fk_resource, 'title' => $obj->ref, 'code' => $obj->code, 'eventColor' => random_color());
 				$TRes[] = array('id' => $obj->fk_resource, 'title' => $obj->ref, 'code' => $obj->code, 'eventTextColor' => '#fff', 'eventColor' => $bgColor );
 				
 				$i++;
+				$j++;
 			}
 		}
 		else
@@ -216,14 +219,4 @@ function getEventForResources($TResource, $date='')
 	}
 	
 	return $TEvent;
-}
-
-
-// TODO remove quand une meilleur solution pour la couleur sera ready
-function random_color_part() {
-    return str_pad( dechex( mt_rand( 0, 255 ) ), 2, '0', STR_PAD_LEFT);
-}
-
-function random_color() {
-    return '#' . random_color_part() . random_color_part() . random_color_part();
 }

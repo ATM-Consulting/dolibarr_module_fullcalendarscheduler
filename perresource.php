@@ -84,7 +84,6 @@ echo '
 <script type="text/javascript">
 	fullcalendarscheduler_interface = "'.dol_buildpath('/fullcalendarscheduler/script/interface.php', 1).'";
 	fullcalendarscheduler_initialLangCode = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_LOCALE_LANG) ? $conf->global->FULLCALENDARSCHEDULER_LOCALE_LANG : 'fr').'";
-	fullcalendarscheduler_defaultTimedEventDuration = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION) ? $conf->global->FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION : '01:00:00').'";
 	fullcalendarscheduler_snapDuration = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_SNAP_DURATION) ? $conf->global->FULLCALENDARSCHEDULER_SNAP_DURATION : '00:30:00').'";
 	fullcalendarscheduler_aspectRatio = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_ASPECT_RATIO) ? $conf->global->FULLCALENDARSCHEDULER_ASPECT_RATIO : '1.6').'";
 	fullcalendarscheduler_minTime = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_MIN_TIME) ? $conf->global->FULLCALENDARSCHEDULER_MIN_TIME : '00:00').'";
@@ -100,8 +99,11 @@ echo '
 	fullcalendar_scheduler_businessHours_weekend_end = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END) ? $conf->global->FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END : '16:00').'";
 	
 	fullcalendarscheduler_title_dialog_create_event = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_title_dialog_create_event').'";
+	fullcalendarscheduler_title_dialog_delete_event = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_title_dialog_delete_event').'";
 	fullcalendarscheduler_button_dialog_add = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_add').'";
 	fullcalendarscheduler_button_dialog_cancel = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_cancel').'";
+	fullcalendarscheduler_button_dialog_confirm = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_confirm').'";
+	fullcalendarscheduler_content_dialog_delete = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_content_dialog_delete').'";
 	
 	fullcalendarscheduler_date_format = "'.$langs->trans("FormatDateShortJavaInput").'";
 	
@@ -115,6 +117,8 @@ echo '
 								.append("<p>"+'.json_encode($select_contact).'+"</p>")
 								.append("<p>"+'.json_encode($select_user).'+"</p>")
 								.append("<p>"+'.json_encode($select_resource).'+"</p>");
+								
+	fullcalendarscheduler_picto_delete = "'.addslashes(img_delete()).'";
 								
 </script>';
 

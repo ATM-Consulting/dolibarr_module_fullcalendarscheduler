@@ -41,6 +41,10 @@ switch ($put) {
 		_createEvent(GETPOST('TParam', 'array'), GETPOST('dateFrom'));
 		__out( $response );
 		break;
+	case 'deleteEvent':
+		_deleteEvent(GETPOST('fk_actioncomm', 'int'));
+		__out( $response );
+		break; 
 }
 
 exit;
@@ -118,17 +122,7 @@ function _updateTimeSlot($event, $dateFrom)
 			$timep = strtotime($event->start);
 			$actioncomm->datep = dol_mktime(date('H', $timep), date('i', $timep), 0, date('m', $timep), date('d', $timep), date('Y', $timep));
 			
-			if (!empty($event->end)) $timef = strtotime($event->end);
-			else
-			{
-				$TDuration = explode(':', $conf->global->FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION);
-				if (empty($TDuration)) $TDuration = array(1, 0, 0); // correspond à 1 heure, 0 minute, 0 seconde (format fullcalendar peut laisser perplexe)
-				
-				$timef += (int) $TDuration[0] * 3600;
-				$timef += (int) $TDuration[1] * 60;
-				//$timef += (int) $TDuration[2]; // les secondes on s'en tape 
-			}
-			
+			$timef = strtotime($event->end);
 			$actioncomm->datef = dol_mktime(date('H', $timef), date('i', $timef), 0, date('m', $timef), date('d', $timef), date('Y', $timef));
 		}
 		
@@ -261,6 +255,28 @@ function _createEvent($TParam, $dateFrom)
 		return -2;
 	}
 	
+}
+
+function _deleteEvent($fk_actioncomm)
+{
+	global $db,$response;
+	
+	$actioncomm = new Actioncomm($db);
+	if ($actioncomm->fetch($fk_actioncomm) > 0)
+	{
+		if ($actioncomm->delete() > 0)
+		{
+			$response->TSuccess[] = 'Delete event id = '.$fk_actioncomm.' successful';
+		}
+		else 
+		{
+			$response->TError[] = $actioncomm->error;
+		}
+	}
+	else
+	{
+		$response->TError[] = $actioncomm->error;
+	}
 }
 
 class interfaceResponse {

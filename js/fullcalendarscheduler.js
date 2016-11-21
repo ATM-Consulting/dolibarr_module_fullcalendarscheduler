@@ -69,11 +69,11 @@ $(document).ready(function() {
 		defaultView: 'agendaDay',
 		editable: true,
 		selectable: true,
+		selectHelper: true,
 		aspectRatio: fullcalendarscheduler_aspectRatio,
 		minTime: fullcalendarscheduler_minTime, // default 00:00
 		maxTime: fullcalendarscheduler_maxTime, // default 23:00
 		eventOverlap: false,
-		defaultTimedEventDuration: fullcalendarscheduler_defaultTimedEventDuration,
 		snapDuration: fullcalendarscheduler_snapDuration,
 		businessHours: [
 			{ // Jours de semaines
@@ -137,7 +137,7 @@ $(document).ready(function() {
 										,label: $('#form_add_event input[name=label]').val()
 										//allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
 										,date_start: $('#date_startyear').val()+'-'+$('#date_startmonth').val()+'-'+$('#date_startday').val()+' '+$('#date_starthour').val()+':'+$('#date_startmin').val()+':00'
-										,date_end: $('#date_startyear').val()+'-'+$('#date_startmonth').val()+'-'+$('#date_startday').val()+' '+$('#date_starthour').val()+':'+$('#date_startmin').val()+':00'
+										,date_end: $('#date_endyear').val()+'-'+$('#date_endmonth').val()+'-'+$('#date_endday').val()+' '+$('#date_endhour').val()+':'+$('#date_endmin').val()+':00'
 										,note: $('#form_add_event textarea[name=note]').val()
 										,fk_soc: $('#fk_soc').val()
 										,contactid: $('#contactid').val()
@@ -188,11 +188,8 @@ $(document).ready(function() {
 					var hour_start = start.format('HH');
 					var minute_start = start.format('mm');
 					
-					var duration = moment.duration(fullcalendarscheduler_defaultTimedEventDuration);
-					start.add(duration);
-					
-					var hour_end = start.format('HH');
-					var minute_end = start.format('mm');
+					var hour_end = end.format('HH');
+					var minute_end = end.format('mm');
 					
 					$('#date_start').val(date);
 					dpChangeDay('date_start', fullcalendarscheduler_date_format);
@@ -304,18 +301,21 @@ $(document).ready(function() {
 			});
 		},
 		eventRender: function(event, element, view) {
-			// TODO à finaliser avec un petit picto et l'action associée => reste encore à définir
-			//console.log(event);
-			var link_a = '<a title="action 1" href="javascript:action_a('+event.id+');">A</a>';
-			var link_b = '<a title="action 2" href="javascript:action_b('+event.id+');">B</a>';
-			var link_c = '<a title="action 3" href="javascript:action_c('+event.id+');">C</a>';
-			element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+link_b+' '+link_c+'</div>');
-			
-			element.find('.fc-content').append('<div class="link_thirdparty">'+event.link_company+'</div>');
-			element.find('.fc-content').append('<div class="link_contact">'+event.link_contact+'</div>');
-			
-			element.find('.link_thirdparty a, .link_contact a').attr('title', '');
-			element.find('.fc-content a').css('color', element.css('color'));
+			if (event.id != null && event.id != 'undefined')
+			{
+				// TODO à finaliser avec un petit picto et l'action associée => reste encore à définir
+				//console.log(event);
+				var link_a = '<a title="action 1" href="javascript:action_a('+event.id+');">A</a>';
+				var link_b = '<a title="'+fullcalendarscheduler_title_dialog_delete_event+'" href="javascript:delete_event('+event.id+');">'+fullcalendarscheduler_picto_delete+'</a>';
+				var link_c = '<a title="action 3" href="javascript:action_c('+event.id+');">C</a>';
+				element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+link_b+' '+link_c+'</div>');
+				
+				element.find('.fc-content').append('<div class="link_thirdparty">'+event.link_company+'</div>');
+				element.find('.fc-content').append('<div class="link_contact">'+event.link_contact+'</div>');
+				
+				element.find('.link_thirdparty a, .link_contact a').attr('title', '');
+				element.find('.fc-content a').css('color', element.css('color'));	
+			}
 			
 		},
 		eventAfterAllRender: function (view) {
@@ -355,13 +355,64 @@ $(document).ready(function() {
 		//view.calendar.addEventSource(event);
 	};
 	
-	action_b = function(id)
+	delete_event = function(id)
 	{
-		alert('Suppression de l\'event (reste à faire l\'appel ajax)');
-		
-		var view = $('#fullcalendar_scheduler').fullCalendar('getView');
-		view.calendar.removeEvents(id);
-		console.log("view = >", view);
+		var div = $('<div>').text(fullcalendarscheduler_content_dialog_delete);
+		div.dialog({
+			modal: true
+			,width: 'auto'
+			,title: fullcalendarscheduler_title_dialog_delete_event
+			,buttons: [
+				{
+					text: fullcalendarscheduler_button_dialog_confirm
+					,icons: { primary: "ui-icon-check" }
+					,click: function() {
+						
+						self = this;
+						
+						$.ajax({
+							url: fullcalendarscheduler_interface
+							,dataType: 'json'
+							,data: {
+								json: 1
+								,put: 'deleteEvent'
+								,fk_actioncomm: id
+							}
+						}).fail(function(jqXHR, textStatus, errorThrown) {
+							console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
+							$( self ).dialog( "close" );
+						}).done(function(response, textStatus, jqXHR) {
+							console.log('Done: ', response);
+
+							if (response.TError.length > 0)
+							{
+								for (var x in response.TError)
+								{
+									$.jnotify(response.TError[x], 'error');
+								}
+							}
+							else
+							{
+								var view = $('#fullcalendar_scheduler').fullCalendar('getView');
+								view.calendar.removeEvents(id);
+								
+								$( self ).dialog( 'close' );
+							}
+							
+						});
+						
+						
+					}
+				},
+				{
+					text: fullcalendarscheduler_button_dialog_cancel
+					,icons: { primary: 'ui-icon-close' }
+					,click: function() {
+						$( this ).dialog( 'close' );
+					}
+				}
+			]
+		});
 	};
 
 

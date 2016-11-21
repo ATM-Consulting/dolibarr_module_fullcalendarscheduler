@@ -15,7 +15,6 @@ FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_START=Work hour begin in week (a backgr
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_END=Work hour end in week (a background is applied on non work hours)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_START=Work hour begin in weekend (a background is applied on non work hours)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END=Work hour begin in weekend (a background is applied on non work hours)
-FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION=Default duration for event (by default 01:00:00)
 FULLCALENDARSCHEDULER_SNAP_DURATION=Slot granularity (by default 00:30:00, events can be moved by 30 minutes bloc)
 FULLCALENDARSCHEDULER_ASPECT_RATIO=Display ratio (modify the visible height of the calendar, default value: 1.6)
 FULLCALENDARSCHEDULER_MIN_TIME=Display start hour of the calendar (default value: 00:00)
@@ -33,3 +32,7 @@ fullcalendarscheduler_create_event_fk_user_empty=No user associated
 fullcalendarscheduler_create_event_fk_resource_empty=No resource selected
 fullcalendarscheduler_create_event_date_start_invalid=Date start format invalid: %s
 fullcalendarscheduler_create_event_date_end_invalid=Date end format invalid: %s
+
+fullcalendarscheduler_title_dialog_delete_event=Delete a event
+fullcalendarscheduler_button_dialog_confirm=Confirm
+fullcalendarscheduler_content_dialog_delete=Are you sure you want to delete this event ? 

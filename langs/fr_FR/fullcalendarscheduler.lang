@@ -15,7 +15,6 @@ FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_START=Heure de début de travail en sem
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_END=Heure de fin de travail en semaine (ceci n'est qu'à titre informatif, un léger voile gris sera appliqué sur les tranches horaires non travaillées)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_START=Heure de début de travail en week-end (ceci n'est qu'à titre informatif, un léger voile gris sera appliqué sur les tranches horaires non travaillées)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END=Heure de fin de travail en week-end (ceci n'est qu'à titre informatif, un léger voile gris sera appliqué sur les tranches horaires non travaillées)
-FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION=Durée par défaut d'un événement (par défault 01:00:00)
 FULLCALENDARSCHEDULER_SNAP_DURATION=Granularité des créneaux (par défault 00:30:00, événements déplaçables par bloc de 30 minutes)
 FULLCALENDARSCHEDULER_ASPECT_RATIO=Ratio d'affichage (permet de modifier la hauteur visible du calendrier, valeur par defaut : 1.6)
 FULLCALENDARSCHEDULER_MIN_TIME=Heure de début d'affichage du calendrier (par défaut 00:00)
@@ -33,3 +32,7 @@ fullcalendarscheduler_create_event_fk_user_empty=Aucun utilisateur associé
 fullcalendarscheduler_create_event_fk_resource_empty=Aucune ressource de renseigné
 fullcalendarscheduler_create_event_date_start_invalid=Format date de début invalide : %s
 fullcalendarscheduler_create_event_date_end_invalid=Format date de fin invalide : %s
+
+fullcalendarscheduler_title_dialog_delete_event=Supprimer événement agenda
+fullcalendarscheduler_button_dialog_confirm=Confirmer
+fullcalendarscheduler_content_dialog_delete=Êtes-vous sûr de vouloir supprimer cette événement agenda ? 

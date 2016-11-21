@@ -188,19 +188,6 @@ print '</td></tr>';
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
-print '<td>'.$langs->trans("FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION").'</td>';
-print '<td align="center" width="20">&nbsp;</td>';
-print '<td align="right" width="300">';
-print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
-print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
-print '<input type="hidden" name="action" value="set_FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION">';
-print '<input name="FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION" type="text" value="'.$conf->global->FULLCALENDARSCHEDULER_DEFAULTTIMEDEVENTDURATION.'" placeholder="00:01:00" />';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</form>';
-print '</td></tr>';
-
-$var=!$var;
-print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("FULLCALENDARSCHEDULER_SNAP_DURATION").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
