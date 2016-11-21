@@ -19,6 +19,7 @@ FULLCALENDARSCHEDULER_SNAP_DURATION=Slot granularity (by default 00:30:00, event
 FULLCALENDARSCHEDULER_ASPECT_RATIO=Display ratio (modify the visible height of the calendar, default value: 1.6)
 FULLCALENDARSCHEDULER_MIN_TIME=Display start hour of the calendar (default value: 00:00)
 FULLCALENDARSCHEDULER_MAX_TIME=Display end hour of the calendar (default value: 23:00)
+FULLCALENDARSCHEDULER_ROW_HEIGHT=Height's slot duration (like zoom effect, expected value is like a Css value, example : 50px)
 
 fullcalendarscheduler_title_dialog_create_event=Create event
 fullcalendarscheduler_button_dialog_add=Add

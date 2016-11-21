@@ -19,6 +19,7 @@ FULLCALENDARSCHEDULER_SNAP_DURATION=Granularité des créneaux (par défault 00:
 FULLCALENDARSCHEDULER_ASPECT_RATIO=Ratio d'affichage (permet de modifier la hauteur visible du calendrier, valeur par defaut : 1.6)
 FULLCALENDARSCHEDULER_MIN_TIME=Heure de début d'affichage du calendrier (par défaut 00:00)
 FULLCALENDARSCHEDULER_MAX_TIME=Heure de fin d'affichage du calendrier (par défaut 23:00)
+FULLCALENDARSCHEDULER_ROW_HEIGHT=Hauteur des créneaux horaire (effet de zoom, la valeur attendue est une valeur Css, exemple : 50px)
 
 fullcalendarscheduler_title_dialog_create_event=Créer un événement
 fullcalendarscheduler_button_dialog_add=Ajouter

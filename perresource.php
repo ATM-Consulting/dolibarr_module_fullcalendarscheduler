@@ -129,6 +129,8 @@ echo '
 		top:1px;
 		right:2px;
 	}
+	
+	'.(!empty($conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT) ? '.fc-agendaDay-view tr { height: '.$conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT.'; }' : '').'
 </style>
 ';
 
