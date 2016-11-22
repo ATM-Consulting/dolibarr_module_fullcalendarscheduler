@@ -78,6 +78,12 @@ $select_contact = ob_get_clean();
 
 $select_user = '<label for="fk_user">'.$langs->transnoentitiesnoconv('User').'</label>'.$form->select_dolusers($user->id, 'fk_user');
 $select_resource = '<label for="fk_resource">'.$langs->transnoentitiesnoconv('Resource').'</label> '.$formresources->select_resource_list('','fk_resource','',0,1,0,array(),'',2);
+
+//$select_service = '<label for="fk_product">'.$langs->transnoentitiesnoconv('Service').'</label>'.$form->select_produits_list('', 'fk_product', 1);
+ob_start();
+echo '<label for="fk_service">'.$langs->transnoentitiesnoconv('Service').'</label>';
+$form->select_produits('', 'fk_service', 1);
+$select_service = ob_get_clean();
 /**/
 
 echo '
@@ -99,8 +105,10 @@ echo '
 	fullcalendar_scheduler_businessHours_weekend_end = "'.(!empty($conf->global->FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END) ? $conf->global->FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_END : '16:00').'";
 	
 	fullcalendarscheduler_title_dialog_create_event = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_title_dialog_create_event').'";
+	fullcalendarscheduler_title_dialog_update_event = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_title_dialog_update_event').'";
 	fullcalendarscheduler_title_dialog_delete_event = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_title_dialog_delete_event').'";
 	fullcalendarscheduler_button_dialog_add = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_add').'";
+	fullcalendarscheduler_button_dialog_update = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_update').'";
 	fullcalendarscheduler_button_dialog_cancel = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_cancel').'";
 	fullcalendarscheduler_button_dialog_confirm = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_confirm').'";
 	fullcalendarscheduler_content_dialog_delete = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_content_dialog_delete').'";
@@ -116,7 +124,10 @@ echo '
 								.append("<p>"+'.json_encode($select_company).'+"</p>")
 								.append("<p>"+'.json_encode($select_contact).'+"</p>")
 								.append("<p>"+'.json_encode($select_user).'+"</p>")
-								.append("<p>"+'.json_encode($select_resource).'+"</p>");
+								.append("<p>"+'.json_encode($select_resource).'+"</p>")
+								.append("<p>"+'.json_encode($select_service).'+"</p>");
+								
+								
 								
 	fullcalendarscheduler_picto_delete = "'.addslashes(img_delete()).'";
 								
@@ -129,6 +140,8 @@ echo '
 		top:1px;
 		right:2px;
 	}
+	
+	.ui-dialog { overflow: visible; }
 	
 	'.(!empty($conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT) ? '.fc-agendaDay-view tr { height: '.$conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT.'; }' : '').'
 </style>

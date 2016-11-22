@@ -37,8 +37,8 @@ switch ($put) {
 		_updateTimeSlot((object) GETPOST('event'), GETPOST('dateFrom'));
 		__out( $response );
 		break;
-	case 'createEvent':
-		_createEvent(GETPOST('TParam', 'array'), GETPOST('dateFrom'));
+	case 'createOrUpdateEvent':
+		_createOrUpdateEvent(GETPOST('TParam', 'array'), GETPOST('dateFrom'));
 		__out( $response );
 		break;
 	case 'deleteEvent':
@@ -162,11 +162,11 @@ function _getEventsFromDate($dateFrom)
 }
 
 /**
- * Fonction qui créé un nouvel événement agenda et le retourne
+ * Fonction qui créé ou maj un événement agenda et le retourne
  * 
  * @param $TParam	array
  */
-function _createEvent($TParam, $dateFrom)
+function _createOrUpdateEvent($TParam, $dateFrom)
 {
 	global $db, $response, $langs, $user;
 	
@@ -189,6 +189,14 @@ function _createEvent($TParam, $dateFrom)
 	}
 	
 	$actioncomm = new Actioncomm($db);
+	if (!empty($TParam['fk_actioncomm']))
+	{
+		if ($actioncomm->fetch($TParam['fk_actioncomm']) < 0)
+		{
+			$response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_error_fetch', $TParam['fk_actioncomm']);
+			return -5;
+		}
+	}
 	
 	// Initialisation object actioncomm
 	$actioncomm->type_code = $TParam['type_code'];
@@ -207,8 +215,7 @@ function _createEvent($TParam, $dateFrom)
 	if (!empty($TParam['contactid'])) $actioncomm->contact->fetch($TParam['contactid']);
 	
 	$actioncomm->userownerid = $TParam['fk_user'];
-	//$actioncomm->userassigned[] = array('id'=>$TParam['fk_user'], 'transparency'=>0); // Facultatif, la methode create fait la même chose
-	
+	$actioncomm->userassigned = array($actioncomm->userownerid=>array('id'=>$actioncomm->userownerid));
 	
 	// Autres params que je n'utilise pas
 	$actioncomm->priority = 0;
@@ -216,19 +223,54 @@ function _createEvent($TParam, $dateFrom)
 	$actioncomm->fk_project = 0;
 	$actioncomm->percentage = -1; // Non application, à faire évoluer potentiellement
 	$actioncomm->duree = 0;
-
+	
+	$is_update = 0;
 	
 	$db->begin(); // Gestion de la transaction à ce niveau car je doit, après création de l'event, associer la ressource
-	if ($actioncomm->create($user) > 0)
+	if (empty($actioncomm->id)) $res = $actioncomm->create($user);
+	else $is_update = $res = $actioncomm->update($user);
+	
+	if ($res > 0)
 	{
 		if (!$actioncomm->error)
 		{
+			if (!empty($TParam['fk_service']))
+			{
+				$service = new product($db);
+				$actioncomm->fetchObjectLinked('', $service->element);
+				if (!empty($actioncomm->linkedObjectsIds)) 
+				{
+					foreach ($actioncomm->linkedObjectsIds as $fk_element_element => $fk_product) $actioncomm->deleteObjectLinked('', '', '', '', $fk_element_element);
+				}
+				if ($actioncomm->add_object_linked($service->element, $TParam['fk_service']) <= 0)
+				{
+					$db->rollback();
+					$response->TError[] = $actioncomm->error;
+					return -6;
+				}
+			}
+			
+			// TODO à faire évoluer si nécessaire
+			// Si je suis dans le cas d'un update, alors je supprime l'association à la ressource précédente puis je fait mon ajout (méthode un peu brutale car j'empèche l'association à plusieurs ressources, le module n'est pas prévus pour ça si non il faut valoriser en amont l'attribut "resourceIds")
+			if ($is_update)
+			{
+				$dolresource = new Dolresource($db);
+				$TResourceLinked = $dolresource->getElementResources($actioncomm->element, $actioncomm->id, 'dolresource');
+				if (!empty($TResourceLinked))
+				{
+					foreach ($TResourceLinked as $Tab)
+					{
+						$actioncomm->delete_resource($Tab['rowid'], $actioncomm->element);
+					}
+				}
+			}
+			
 			$res = $actioncomm->add_element_resource($TParam['fk_resource'], 'dolresource');
 			if ($res)
 			{
 				$db->commit();
 				$TResource = getResourcesAllowed();
-				$TEvent = getEventForResources($TResource, $TParam['dateFrom']);
+				$TEvent = getEventForResources($TResource, $dateFrom);
 				
 				$response->TSuccess[] = 'Create event and resource linked successful';
 				$response->data->TEvent = $TEvent;

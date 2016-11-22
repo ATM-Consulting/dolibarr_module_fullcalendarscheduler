@@ -109,103 +109,19 @@ $(document).ready(function() {
 
 		resources: fullcalendar_scheduler_resources_allowed, // Tableau d'objet
 		//events: fullcalendar_scheduler_events_by_resource, // Tableau d'objet
-
+		eventClick: function(event, jsEvent, view) {
+			console.log('eventClick called: ', event);
+			if (!$(jsEvent.originalEvent.target.parentElement).hasClass('ajaxtool_link'))
+			{
+				// show form, seulement si le clic ne provient pas d'un lien "action rapide"
+				showEventDialog(view, event.start, event.end, view.calendar.getResourceById(event.resourceId), event);	
+			}
+		},
 		select: function(start, end, jsEvent, view, resource) {
 			console.log('select called: ', start.format(), resource ? 'ID res = '+resource.id : '(no resource)');
 			
 			// show form
-			fullcalendarscheduler_div.dialog({
-				modal: true
-				,width: 'auto'
-				,title: fullcalendarscheduler_title_dialog_create_event
-				,buttons: [
-					{
-						text: fullcalendarscheduler_button_dialog_add
-						,icons: { primary: "ui-icon-check" }
-						,click: function() {
-							
-							self = this;
-							
-							$.ajax({
-								url: fullcalendarscheduler_interface
-								,dataType: 'json'
-								,data: {
-									json: 1
-									,put: 'createEvent'
-									,TParam: {
-										type_code: $('#type_code').val()
-										,label: $('#form_add_event input[name=label]').val()
-										//allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
-										,date_start: $('#date_startyear').val()+'-'+$('#date_startmonth').val()+'-'+$('#date_startday').val()+' '+$('#date_starthour').val()+':'+$('#date_startmin').val()+':00'
-										,date_end: $('#date_endyear').val()+'-'+$('#date_endmonth').val()+'-'+$('#date_endday').val()+' '+$('#date_endhour').val()+':'+$('#date_endmin').val()+':00'
-										,note: $('#form_add_event textarea[name=note]').val()
-										,fk_soc: $('#fk_soc').val()
-										,contactid: $('#contactid').val()
-										,fk_user: $('#fk_user').val()
-										,fk_resource: $('#fk_resource').val()
-									}
-									,dateFrom: view.start.format('YYYY-MM-DD')
-								}
-								,
-							}).fail(function(jqXHR, textStatus, errorThrown) {
-								console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
-								$( self ).dialog( "close" );
-							}).done(function(response, textStatus, jqXHR) {
-								console.log('Done: ', response);
-
-								if (response.TError.length > 0)
-								{
-									for (var x in response.TError)
-									{
-										$.jnotify(response.TError[x], 'error');
-									}
-								}
-								else
-								{
-									view.calendar.removeEvents();
-									view.calendar.addEventSource(response.data.TEvent);
-									
-									$( self ).dialog( 'close' );
-								}
-								
-							});
-							
-							
-						}
-					},
-					{
-						text: fullcalendarscheduler_button_dialog_cancel
-						,icons: { primary: 'ui-icon-close' }
-						,click: function() {
-							$( this ).dialog( 'close' );
-						}
-					}
-				]
-				,open: function( event, ui ) {
-					// Format en majuscule pour l'objet moment() si non il renvoie le mauvais format
-					var date = start.format(fullcalendarscheduler_date_format.toUpperCase());
-					
-					var hour_start = start.format('HH');
-					var minute_start = start.format('mm');
-					
-					var hour_end = end.format('HH');
-					var minute_end = end.format('mm');
-					
-					$('#date_start').val(date);
-					dpChangeDay('date_start', fullcalendarscheduler_date_format);
-					$('#date_end').val(date);
-					dpChangeDay('date_end', fullcalendarscheduler_date_format);
-					
-					$('#date_starthour').val(hour_start);
-					$('#date_startmin').val(minute_start);
-					
-					$('#date_endhour').val(hour_end);
-					$('#date_endmin').val(minute_end);
-					
-					fullcalendarscheduler_div.find('#fk_resource').val(resource.id).trigger('change');
-				}
-			});
-			
+			showEventDialog(view, start, end, resource);
 		},
 		dayClick: function(date, jsEvent, view, resource) {
 			console.log('dayClick called: ', date.format(), resource ? 'ID res = '+resource.id : '(no resource)');
@@ -305,9 +221,9 @@ $(document).ready(function() {
 			{
 				// TODO à finaliser avec un petit picto et l'action associée => reste encore à définir
 				//console.log(event);
-				var link_a = '<a title="action 1" href="javascript:action_a('+event.id+');">A</a>';
-				var link_b = '<a title="'+fullcalendarscheduler_title_dialog_delete_event+'" href="javascript:delete_event('+event.id+');">'+fullcalendarscheduler_picto_delete+'</a>';
-				var link_c = '<a title="action 3" href="javascript:action_c('+event.id+');">C</a>';
+				var link_a = '<a title="action 1" class="ajaxtool_link" href="javascript:action_a('+event.id+');">A</a>';
+				var link_b = '<a title="'+fullcalendarscheduler_title_dialog_delete_event+'" class="ajaxtool_link" href="javascript:delete_event('+event.id+');">'+fullcalendarscheduler_picto_delete+'</a>';
+				var link_c = '<a title="action 3" class="ajaxtool_link" href="javascript:action_c('+event.id+');">C</a>';
 				element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+link_b+' '+link_c+'</div>');
 				
 				element.find('.fc-content').append('<div class="link_thirdparty">'+event.link_company+'</div>');
@@ -420,4 +336,124 @@ $(document).ready(function() {
 	{
 		alert('Reste à faire');
 	};
+	
+	
+	
+	showEventDialog = function(view, start, end, resource, event)
+	{
+		fullcalendarscheduler_div.dialog({
+			modal: true
+			,width: 'auto'
+			,title: (typeof event !== 'undefined') ? fullcalendarscheduler_title_dialog_update_event : fullcalendarscheduler_title_dialog_create_event
+			,buttons: [
+				{
+					text: (typeof event !== 'undefined') ? fullcalendarscheduler_button_dialog_update : fullcalendarscheduler_button_dialog_add
+					,icons: { primary: "ui-icon-check" }
+					,click: function() {
+						
+						self = this;
+						
+						$.ajax({
+							url: fullcalendarscheduler_interface
+							,dataType: 'json'
+							,data: {
+								json: 1
+								,put: 'createOrUpdateEvent'
+								,TParam: {
+									fk_actioncomm: (typeof event !== 'undefined') ? event.id : 0
+									,type_code: $('#type_code').val()
+									,label: $('#form_add_event input[name=label]').val()
+									//allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
+									,date_start: $('#date_startyear').val()+'-'+$('#date_startmonth').val()+'-'+$('#date_startday').val()+' '+$('#date_starthour').val()+':'+$('#date_startmin').val()+':00'
+									,date_end: $('#date_endyear').val()+'-'+$('#date_endmonth').val()+'-'+$('#date_endday').val()+' '+$('#date_endhour').val()+':'+$('#date_endmin').val()+':00'
+									,note: $('#form_add_event textarea[name=note]').val()
+									,fk_soc: $('#fk_soc').val()
+									,contactid: $('#contactid').val()
+									,fk_user: $('#fk_user').val()
+									,fk_resource: $('#fk_resource').val()
+									,fk_service: $('#fk_service').val()
+								}
+								,dateFrom: view.start.format('YYYY-MM-DD')
+							}
+							,
+						}).fail(function(jqXHR, textStatus, errorThrown) {
+							console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
+							$( self ).dialog( "close" );
+						}).done(function(response, textStatus, jqXHR) {
+							console.log('Done: ', response);
+
+							if (response.TError.length > 0)
+							{
+								for (var x in response.TError)
+								{
+									$.jnotify(response.TError[x], 'error');
+								}
+							}
+							else
+							{
+								view.calendar.removeEvents();
+								view.calendar.addEventSource(response.data.TEvent);
+								
+								$( self ).dialog( 'close' );
+							}
+							
+						});
+						
+					}
+				},
+				{
+					text: fullcalendarscheduler_button_dialog_cancel
+					,icons: { primary: 'ui-icon-close' }
+					,click: function() {
+						$( this ).dialog( 'close' );
+					}
+				}
+			]
+			,open: function( jsEvent, ui ) {
+				// Init fields
+				initEventFormFields(start, end, resource, event);
+			}
+		});
+		
+		
+	};
+	
+	
+	initEventFormFields = function(start, end, resource, event) {
+		
+		if (typeof event !== 'undefined')
+		{
+			$('#type_code').val(event.type_code).trigger('change');
+			$('#form_add_event input[name=label]').val(event.title);
+			$('#form_add_event textarea[name=note]').val(event.desc);
+			
+			$('#fk_soc').val(event.fk_soc).trigger('change');
+			setTimeout( function() { // La modification du tiers charge en ajax le contenu du select contact, il faut donc update la selection de celui-ci après
+				$('#contactid').val(event.fk_socpeople).trigger('change');
+			}, 150);
+			
+			$('#fk_service').val(event.fk_service).trigger('change');
+			$('#search_fk_service').val(event.product_ref).trigger('change');
+		}
+		
+		// Format en majuscule pour l'objet moment() si non il renvoie le mauvais format
+		var date = start.format(fullcalendarscheduler_date_format.toUpperCase());
+		$('#date_start').val(date);
+		dpChangeDay('date_start', fullcalendarscheduler_date_format);
+		$('#date_end').val(date);
+		dpChangeDay('date_end', fullcalendarscheduler_date_format);
+		
+		var hour_start = start.format('HH');
+		var minute_start = start.format('mm');
+		$('#date_starthour').val(hour_start);
+		$('#date_startmin').val(minute_start);
+		
+		var hour_end = end.format('HH');
+		var minute_end = end.format('mm');
+		$('#date_endhour').val(hour_end);
+		$('#date_endmin').val(minute_end);
+		
+		fullcalendarscheduler_div.find('#fk_resource').val(resource.id).trigger('change');
+	};
+	
 });

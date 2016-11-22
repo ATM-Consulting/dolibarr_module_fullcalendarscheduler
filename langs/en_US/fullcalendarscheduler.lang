@@ -22,7 +22,9 @@ FULLCALENDARSCHEDULER_MAX_TIME=Display end hour of the calendar (default value: 
 FULLCALENDARSCHEDULER_ROW_HEIGHT=Height's slot duration (like zoom effect, expected value is like a Css value, example : 50px)
 
 fullcalendarscheduler_title_dialog_create_event=Create event
+fullcalendarscheduler_title_dialog_create_event=Modify event
 fullcalendarscheduler_button_dialog_add=Add
+fullcalendarscheduler_button_dialog_update=Modify
 fullcalendarscheduler_button_dialog_cancel=Cancel
 
 
@@ -33,6 +35,7 @@ fullcalendarscheduler_create_event_fk_user_empty=No user associated
 fullcalendarscheduler_create_event_fk_resource_empty=No resource selected
 fullcalendarscheduler_create_event_date_start_invalid=Date start format invalid: %s
 fullcalendarscheduler_create_event_date_end_invalid=Date end format invalid: %s
+fullcalendarscheduler_create_event_error_fetch=Impossible to modify event, this id [%s] is not present in database
 
 fullcalendarscheduler_title_dialog_delete_event=Delete a event
 fullcalendarscheduler_button_dialog_confirm=Confirm

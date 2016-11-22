@@ -22,7 +22,9 @@ FULLCALENDARSCHEDULER_MAX_TIME=Heure de fin d'affichage du calendrier (par défa
 FULLCALENDARSCHEDULER_ROW_HEIGHT=Hauteur des créneaux horaire (effet de zoom, la valeur attendue est une valeur Css, exemple : 50px)
 
 fullcalendarscheduler_title_dialog_create_event=Créer un événement
+fullcalendarscheduler_title_dialog_update_event=Modifier un événément
 fullcalendarscheduler_button_dialog_add=Ajouter
+fullcalendarscheduler_button_dialog_update=Modifier
 fullcalendarscheduler_button_dialog_cancel=Annuler
 
 
@@ -33,6 +35,7 @@ fullcalendarscheduler_create_event_fk_user_empty=Aucun utilisateur associé
 fullcalendarscheduler_create_event_fk_resource_empty=Aucune ressource de renseigné
 fullcalendarscheduler_create_event_date_start_invalid=Format date de début invalide : %s
 fullcalendarscheduler_create_event_date_end_invalid=Format date de fin invalide : %s
+fullcalendarscheduler_create_event_error_fetch=Modification impossible, l'id [%s] ne correspond à aucun événement en base
 
 fullcalendarscheduler_title_dialog_delete_event=Supprimer événement agenda
 fullcalendarscheduler_button_dialog_confirm=Confirmer
