@@ -39,4 +39,4 @@ fullcalendarscheduler_create_event_error_fetch=Modification impossible, l'id [%s
 
 fullcalendarscheduler_title_dialog_delete_event=Supprimer événement agenda
 fullcalendarscheduler_button_dialog_confirm=Confirmer
-fullcalendarscheduler_content_dialog_delete=Êtes-vous sûr de vouloir supprimer cette événement agenda ? 
+fullcalendarscheduler_content_dialog_delete=Êtes-vous sûr de vouloir supprimer cette événement agenda ?

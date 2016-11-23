@@ -164,7 +164,7 @@ class modfullcalendarscheduler extends DolibarrModules
             'tabcond'=>array($conf->fullcalendarscheduler->enabled,$conf->fullcalendarscheduler->enabled,$conf->fullcalendarscheduler->enabled)												// Condition to show each dictionary
         );
         */
-
+		
         // Boxes
 		// Add here list of php file(s) stored in core/boxes that contains class to show a box.
         $this->boxes = array();			// List of boxes

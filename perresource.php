@@ -7,7 +7,7 @@ require_once DOL_DOCUMENT_ROOT.'/contact/class/contact.class.php';
 require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
-
+require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formactions.class.php';
 require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 
@@ -84,6 +84,10 @@ ob_start();
 echo '<label for="fk_service">'.$langs->transnoentitiesnoconv('Service').'</label>';
 $form->select_produits('', 'fk_service', 1);
 $select_service = ob_get_clean();
+
+
+//$extrafields = new ExtraFields($db);
+
 /**/
 
 echo '
@@ -127,8 +131,6 @@ echo '
 								.append("<p>"+'.json_encode($select_resource).'+"</p>")
 								.append("<p>"+'.json_encode($select_service).'+"</p>");
 								
-								
-								
 	fullcalendarscheduler_picto_delete = "'.addslashes(img_delete()).'";
 	fullcalendarscheduler_TColorCivility = '.json_encode(getTColorCivility()).';
 </script>';
@@ -137,7 +139,7 @@ echo '
 <style type="text/css">
 	#fullcalendar_scheduler .ajaxtool {
 		position:absolute;
-		top:1px;
+		top:3px;
 		right:2px;
 	}
 	

@@ -110,6 +110,14 @@ print '<td align="center" width="100">'.$langs->trans("Value").'</td>'."\n";
 
 $var=!$var;
 print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("FULLCALENDARSCHEDULER_USE_COLOR_FOR_EACH_RESOURCE").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="center" width="300">';
+print ajax_constantonoff('FULLCALENDARSCHEDULER_USE_COLOR_FOR_EACH_RESOURCE');
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
 print '<td>'.$langs->trans("FULLCALENDARSCHEDULER_LOCALE_LANG").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="right" width="300">';
