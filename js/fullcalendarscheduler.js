@@ -231,7 +231,8 @@ $(document).ready(function() {
 				element.find('.fc-content').append('<div class="link_contact">'+event.link_contact+'</div>');
 				element.find('.fc-content').append('<div class="link_service">'+event.link_service+'</div>');
 				
-				element.find('.link_thirdparty a, .link_contact a, .link_service a').attr('title', '');
+				//element.find('.link_thirdparty a, .link_contact a, .link_service a').attr('title', '');
+				element.find('.link_thirdparty a, .link_contact a, .link_service a').tipTip();
 				
 				element.find('.fc-content a').css('color', element.css('color'));	
 			}
@@ -263,7 +264,7 @@ $(document).ready(function() {
 	
 	action_a = function(id)
 	{
-		alert('Update rapide de l\'event');
+		alert('Update statut rapide de l\'event');
 		var view = $('#fullcalendar_scheduler').fullCalendar('getView');
 		console.log("view = >", view);
 		

@@ -165,7 +165,8 @@ function getEventForResources($TResource, $date='')
 		if (empty($date)) $date = date('Y-m-d');
 		
 		$sql = 'SELECT a.id as fk_actioncomm, ca.code as type_code, p.rowid as fk_service, p.ref as product_ref, p.fk_product_type as product_type, p.label as product_label';
-		$sql.= ', er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, sp.rowid as fk_socpeople, sp.civility, sp.lastname, sp.firstname, a.datep, a.datep2, a.fulldayevent, er.rowid as fk_element_resource ';
+		$sql.= ', er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, a.datep, a.datep2, a.fulldayevent, er.rowid as fk_element_resource ';
+		$sql.= ', sp.rowid as fk_socpeople, sp.civility, sp.lastname, sp.firstname, sp.email as contact_email, sp.address as contact_address, sp.zip as contact_zip, sp.town as contact_town, sp.phone_mobile as contact_phone_mobile';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_resources er ON (er.element_id = a.id AND er.element_type = "action")';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'resource r ON (er.resource_id = r.rowid)';
@@ -199,6 +200,11 @@ function getEventForResources($TResource, $date='')
 				$contact->id = $obj->fk_socpeople;
 				$contact->firstname = $obj->firstname;
 				$contact->lastname = $obj->lastname;
+				$contact->email = $obj->contact_email;
+				$contact->phone_mobile = $obj->contact_phone_mobile;
+				$contact->address = $obj->contact_address;
+				$contact->zip = $obj->contact_zip;
+				$contact->town = $obj->contact_town;
 				
 				$service->id = $obj->fk_service;
 				$service->ref = $obj->product_ref;

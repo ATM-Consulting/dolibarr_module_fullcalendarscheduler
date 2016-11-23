@@ -13,6 +13,8 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 dol_include_once('/fullcalendarscheduler/lib/fullcalendarscheduler.lib.php');
 
+$langs->load('companies');
+$langs->load('products');
 $langs->load('errors');
 $langs->load('fullcalendarscheduler@fullcalendarscheduler');
 
