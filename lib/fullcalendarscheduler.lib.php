@@ -164,7 +164,8 @@ function getEventForResources($TResource, $date='')
 		
 		if (empty($date)) $date = date('Y-m-d');
 		
-		$sql = 'SELECT a.id as fk_actioncomm, ca.code as type_code, p.rowid as fk_service, p.ref as product_ref, er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, sp.rowid as fk_socpeople, sp.civility, sp.lastname, sp.firstname, a.datep, a.datep2, a.fulldayevent, er.rowid as fk_element_resource ';
+		$sql = 'SELECT a.id as fk_actioncomm, ca.code as type_code, p.rowid as fk_service, p.ref as product_ref, p.fk_product_type as product_type, p.label as product_label';
+		$sql.= ', er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, sp.rowid as fk_socpeople, sp.civility, sp.lastname, sp.firstname, a.datep, a.datep2, a.fulldayevent, er.rowid as fk_element_resource ';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_resources er ON (er.element_id = a.id AND er.element_type = "action")';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'resource r ON (er.resource_id = r.rowid)';
@@ -174,7 +175,7 @@ function getEventForResources($TResource, $date='')
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_element ee ON (a.id = ee.fk_target AND ee.targettype = "'.$actioncomm->element.'" AND ee.sourcetype = "'.$service->element.'")';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = ee.fk_source)';
 		$sql.= ' WHERE DATE_FORMAT(a.datep, "%Y-%m-%d") = "'.$date.'"';
-		$sql.= ' AND er.resource_id IN ('.implode(',', $TResId).') AND a.id = 44';
+		$sql.= ' AND er.resource_id IN ('.implode(',', $TResId).')';
 		
 		dol_syslog("fulcalendarscheduler.lib.php::getResourcesAllowed", LOG_DEBUG);
 		$resql = $db->query($sql);
@@ -182,6 +183,7 @@ function getEventForResources($TResource, $date='')
 		{
 			$societe = new Societe($db);
 			$contact = new Contact($db);
+			$service = new Product($db);
 			
 			$num = $db->num_rows($resql);
 			$i = 0;
@@ -198,12 +200,18 @@ function getEventForResources($TResource, $date='')
 				$contact->firstname = $obj->firstname;
 				$contact->lastname = $obj->lastname;
 				
+				$service->id = $obj->fk_service;
+				$service->ref = $obj->product_ref;
+				$service->label = $obj->product_label;
+				$service->type = $obj->product_type;
+				
 				// Surtout ne pas mettre de clé en indice, si non, un json encode en sortie est foireux
 				$TEvent[] = array(
 					'id' => $obj->fk_actioncomm
 					,'type_code' => $obj->type_code
 					,'fk_service' => $obj->fk_service
 					,'product_ref' => $obj->product_ref
+					,'link_service' => !empty($service->id) ? $service->getNomUrl(1) : ''
 					,'resourceId' => $obj->resource_id
 					,'fk_element_resource' => $obj->fk_element_resource 
 					,'title' => $obj->label

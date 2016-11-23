@@ -222,14 +222,17 @@ $(document).ready(function() {
 				// TODO à finaliser avec un petit picto et l'action associée => reste encore à définir
 				//console.log(event);
 				var link_a = '<a title="action 1" class="ajaxtool_link" href="javascript:action_a('+event.id+');">A</a>';
-				var link_b = '<a title="'+fullcalendarscheduler_title_dialog_delete_event+'" class="ajaxtool_link" href="javascript:delete_event('+event.id+');">'+fullcalendarscheduler_picto_delete+'</a>';
-				var link_c = '<a title="action 3" class="ajaxtool_link" href="javascript:action_c('+event.id+');">C</a>';
-				element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+link_b+' '+link_c+'</div>');
+				var link_b = '<a title="action 2" class="ajaxtool_link" href="javascript:action_b('+event.id+');">B</a>';
+				
+				var action_delete = '<a title="'+fullcalendarscheduler_title_dialog_delete_event+'" class="ajaxtool_link" href="javascript:delete_event('+event.id+');">'+fullcalendarscheduler_picto_delete+'</a>';
+				element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+link_b+' '+action_delete+'</div>');
 				
 				element.find('.fc-content').append('<div class="link_thirdparty">'+event.link_company+'</div>');
 				element.find('.fc-content').append('<div class="link_contact">'+event.link_contact+'</div>');
+				element.find('.fc-content').append('<div class="link_service">'+event.link_service+'</div>');
 				
-				element.find('.link_thirdparty a, .link_contact a').attr('title', '');
+				element.find('.link_thirdparty a, .link_contact a, .link_service a').attr('title', '');
+				
 				element.find('.fc-content a').css('color', element.css('color'));	
 			}
 			
@@ -269,6 +272,11 @@ $(document).ready(function() {
 		
 		//view.calendar.removeEvents(id);
 		//view.calendar.addEventSource(event);
+	};
+	
+	action_b = function(id)
+	{
+		alert('Reste à faire');
 	};
 	
 	delete_event = function(id)
@@ -329,14 +337,7 @@ $(document).ready(function() {
 				}
 			]
 		});
-	};
-
-
-	action_c = function(id)
-	{
-		alert('Reste à faire');
-	};
-	
+	};	
 	
 	
 	showEventDialog = function(view, start, end, resource, event)
