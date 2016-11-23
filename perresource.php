@@ -28,6 +28,7 @@ $morecss = array(
 	,'/fullcalendarscheduler/css/scheduler.min.css'
 );
 
+$actioncomm = new ActionComm($db);
 
 llxHeader('', $langs->trans("Agenda"), '', '', 0, 0, $morejs, $morecss);
 $head = calendars_prepare_head(array());
@@ -86,7 +87,13 @@ $form->select_produits('', 'fk_service', 1);
 $select_service = ob_get_clean();
 
 
-//$extrafields = new ExtraFields($db);
+$extrafields = new ExtraFields($db);
+// fetch optionals attributes and labels
+$extralabels=$extrafields->fetch_name_optionals_label($actioncomm->table_element);
+if (!empty($extrafields->attribute_label))
+{
+	$TExtraToPrint = '<table class="extrafields" width="100%">'.$actioncomm->showOptionals($extrafields, 'edit').'</table>';
+}
 
 /**/
 
@@ -129,7 +136,9 @@ echo '
 								.append("<p>"+'.json_encode($select_contact).'+"</p>")
 								.append("<p>"+'.json_encode($select_user).'+"</p>")
 								.append("<p>"+'.json_encode($select_resource).'+"</p>")
-								.append("<p>"+'.json_encode($select_service).'+"</p>");
+								.append("<p>"+'.json_encode($select_service).'+"</p>")
+								.append("<p>"+'.json_encode($TExtraToPrint).'+"</p>");
+								
 								
 	fullcalendarscheduler_picto_delete = "'.addslashes(img_delete()).'";
 	fullcalendarscheduler_TColorCivility = '.json_encode(getTColorCivility()).';
