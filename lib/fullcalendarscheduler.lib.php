@@ -104,6 +104,7 @@ function getResourcesAllowed()
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'resource r';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_type_resource ctr ON (r.fk_code_type_resource = ctr.code)';
 		$sql.= ' WHERE ctr.active > 0';
+		$sql.= ' AND r.entity = '.$conf->entity; // TODO à faire évoluer potentiellement vers un getEntity
 		$sql.= ' AND ctr.code IN ("'.implode('","', explode(',', $conf->global->FULLCALENDAR_SCHEDULER_RESOURCES_TYPE_ALLOWED)).'")';
 		
 		dol_syslog("fulcalendarscheduler.lib.php::getResourcesAllowed", LOG_DEBUG);
@@ -146,7 +147,7 @@ function getResourcesAllowed()
  */
 function getEventForResources($TResource, $date='')
 {
-	global $db;
+	global $db,$conf;
 	
 	$TEvent = $TResId = array();
 	foreach ($TResource as &$l)
@@ -175,7 +176,8 @@ function getEventForResources($TResource, $date='')
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_actioncomm ca ON (ca.id = a.fk_action)';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_element ee ON (a.id = ee.fk_target AND ee.targettype = "'.$actioncomm->element.'" AND ee.sourcetype = "'.$service->element.'")';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = ee.fk_source)';
-		$sql.= ' WHERE DATE_FORMAT(a.datep, "%Y-%m-%d") = "'.$date.'"';
+		$sql.= ' WHERE a.entity = '.$conf->entity; // TODO à faire évoluer potentiellement vers un getEntity
+		$sql.= ' AND DATE_FORMAT(a.datep, "%Y-%m-%d") = "'.$date.'"';
 		$sql.= ' AND er.resource_id IN ('.implode(',', $TResId).')';
 		
 		dol_syslog("fulcalendarscheduler.lib.php::getResourcesAllowed", LOG_DEBUG);
@@ -245,4 +247,22 @@ function getEventForResources($TResource, $date='')
 	}
 	
 	return $TEvent;
+}
+
+/**
+ * Fonction qui retourne un tableau associatif entre le code civilité et la couleur associée
+ * 
+ * TODO à faire évoluer pour paramétrer les couleurs par civilité disponible
+ */
+function getTColorCivility()
+{
+	$TColorCivility = array(
+		'DR' => '#F8334E'
+		,'MME' => '#E929B4'
+		,'MLE' => '#E929B4'
+		,'MTRE' => '#E85728'
+		,'MR' => '#2455CE'
+	);
+	
+	return $TColorCivility;
 }

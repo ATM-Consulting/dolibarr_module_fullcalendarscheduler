@@ -130,7 +130,7 @@ echo '
 								
 								
 	fullcalendarscheduler_picto_delete = "'.addslashes(img_delete()).'";
-								
+	fullcalendarscheduler_TColorCivility = '.json_encode(getTColorCivility()).';
 </script>';
 
 echo '

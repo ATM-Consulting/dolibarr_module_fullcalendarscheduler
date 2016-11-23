@@ -235,7 +235,12 @@ $(document).ready(function() {
 				//element.find('.link_thirdparty a, .link_contact a, .link_service a').attr('title', '');
 				element.find('.link_thirdparty a, .link_contact a, .link_service a').tipTip();
 				
-				element.find('.fc-content a').css('color', element.css('color'));	
+				element.find('.fc-content a').css('color', element.css('color'));
+				
+				if (typeof fullcalendarscheduler_TColorCivility[event.contact_civility] != 'undefined')
+				{
+					element.find('.fc-time, .fc-title').css('background', fullcalendarscheduler_TColorCivility[event.contact_civility]);
+				}
 			}
 			
 		},
