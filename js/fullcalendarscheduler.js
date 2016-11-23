@@ -110,8 +110,9 @@ $(document).ready(function() {
 		resources: fullcalendar_scheduler_resources_allowed, // Tableau d'objet
 		//events: fullcalendar_scheduler_events_by_resource, // Tableau d'objet
 		eventClick: function(event, jsEvent, view) {
-			console.log('eventClick called: ', event);
-			if (!$(jsEvent.originalEvent.target.parentElement).hasClass('ajaxtool_link'))
+			console.log('eventClick called: ', event, jsEvent);
+			
+			if (!$(jsEvent.target.parentElement).hasClass('ajaxtool_link') && !$(jsEvent.target).hasClass('classfortooltip'))
 			{
 				// show form, seulement si le clic ne provient pas d'un lien "action rapide"
 				showEventDialog(view, event.start, event.end, view.calendar.getResourceById(event.resourceId), event);	
