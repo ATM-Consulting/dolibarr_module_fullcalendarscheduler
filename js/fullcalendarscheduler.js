@@ -112,7 +112,7 @@ $(document).ready(function() {
 		eventClick: function(event, jsEvent, view) {
 			console.log('eventClick called: ', event, jsEvent);
 			
-			if (!$(jsEvent.target.parentElement).hasClass('ajaxtool_link') && !$(jsEvent.target).hasClass('classfortooltip'))
+			if (!$(jsEvent.target.parentElement).hasClass('ajaxtool_link') && !$(jsEvent.target.parentElement).hasClass('ajaxtool') && !$(jsEvent.target).hasClass('classfortooltip'))
 			{
 				// show form, seulement si le clic ne provient pas d'un lien "action rapide"
 				showEventDialog(view, event.start, event.end, view.calendar.getResourceById(event.resourceId), event);	
@@ -222,14 +222,17 @@ $(document).ready(function() {
 				// TODO à finaliser avec un petit picto et l'action associée => reste encore à définir
 				//console.log(event);
 				var link_a = '<a title="action 1" class="ajaxtool_link" href="javascript:action_a('+event.id+');">A</a>';
-				var link_b = '<a title="action 2" class="ajaxtool_link" href="javascript:action_b('+event.id+');">B</a>';
 				
-				var action_delete = '<a title="'+fullcalendarscheduler_title_dialog_delete_event+'" class="ajaxtool_link" href="javascript:delete_event('+event.id+');">'+fullcalendarscheduler_picto_delete+'</a>';
-				element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+link_b+' '+action_delete+'</div>');
+				var action_detail = '<a class="ajaxtool_link need_to_be_adjust" href="'+fullcalendarscheduler_url_event_card+'?id='+event.id+'">'+fullcalendarscheduler_picto_detail+'</a>';
+				var action_delete = '<a class="ajaxtool_link" href="javascript:delete_event('+event.id+');">'+fullcalendarscheduler_picto_delete+'</a>';
 				
-				element.find('.fc-content').append('<div class="link_thirdparty">'+event.link_company+'</div>');
-				element.find('.fc-content').append('<div class="link_contact">'+event.link_contact+'</div>');
-				element.find('.fc-content').append('<div class="link_service">'+event.link_service+'</div>');
+				//fullcalendarscheduler_picto_detail
+				element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+action_detail+' '+action_delete+'</div>');
+				
+				element.find('.fc-content')	.append('<div class="link_thirdparty">'+event.link_company+'</div>')
+											.append('<div class="link_contact">'+event.link_contact+'</div>')
+											.append('<div class="link_service">'+event.link_service+'</div>')
+											.append('<div class="extrafields">'+event.showOptionals+'</div>');
 				
 				//element.find('.link_thirdparty a, .link_contact a, .link_service a').attr('title', '');
 				element.find('.link_thirdparty a, .link_contact a, .link_service a').tipTip();
@@ -370,7 +373,7 @@ $(document).ready(function() {
 						
 						$.ajax({
 							url: fullcalendarscheduler_interface
-							,type: 'POST'
+							,type: 'GET' // obligatoirement en GET car la méthode d'affichage des extrafields ne permet pas d'utiliser du POST à cause de la méthode showOptionals du commonObject
 							,dataType: 'json'
 							,data: dataObject
 						}).fail(function(jqXHR, textStatus, errorThrown) {
@@ -420,35 +423,41 @@ $(document).ready(function() {
 		
 		if (typeof event !== 'undefined')
 		{
-			$('#type_code').val(event.type_code).trigger('change');
-			$('#form_add_event input[name=label]').val(event.title);
-			$('#form_add_event textarea[name=note]').val(event.desc);
+			fullcalendarscheduler_div.find('#type_code').val(event.type_code).trigger('change');
+			fullcalendarscheduler_div.find('input[name=label]').val(event.title);
+			fullcalendarscheduler_div.find('textarea[name=note]').val(event.desc);
 			
-			$('#fk_soc').val(event.fk_soc).trigger('change');
+			fullcalendarscheduler_div.find('#fk_soc').val(event.fk_soc).trigger('change');
 			setTimeout( function() { // La modification du tiers charge en ajax le contenu du select contact, il faut donc update la selection de celui-ci après
-				$('#contactid').val(event.fk_socpeople).trigger('change');
+				fullcalendarscheduler_div.find('#contactid').val(event.fk_socpeople).trigger('change');
 			}, 150);
 			
-			$('#fk_service').val(event.fk_service).trigger('change');
-			$('#search_fk_service').val(event.product_ref).trigger('change');
+			fullcalendarscheduler_div.find('#fk_service').val(event.fk_service).trigger('change');
+			fullcalendarscheduler_div.find('#search_fk_service').val(event.product_ref).trigger('change');
+			
+			if (typeof event.editOptionals != 'undefined')
+			{
+				fullcalendarscheduler_div.find('#extrafield_to_replace').replaceWith(event.editOptionals);
+			}
+			
 		}
 		
 		// Format en majuscule pour l'objet moment() si non il renvoie le mauvais format
 		var date = start.format(fullcalendarscheduler_date_format.toUpperCase());
-		$('#date_start').val(date);
+		fullcalendarscheduler_div.find('#date_start').val(date);
 		dpChangeDay('date_start', fullcalendarscheduler_date_format);
-		$('#date_end').val(date);
+		fullcalendarscheduler_div.find('#date_end').val(date);
 		dpChangeDay('date_end', fullcalendarscheduler_date_format);
 		
 		var hour_start = start.format('HH');
 		var minute_start = start.format('mm');
-		$('#date_starthour').val(hour_start);
-		$('#date_startmin').val(minute_start);
+		fullcalendarscheduler_div.find('#date_starthour').val(hour_start);
+		fullcalendarscheduler_div.find('#date_startmin').val(minute_start);
 		
 		var hour_end = end.format('HH');
 		var minute_end = end.format('mm');
-		$('#date_endhour').val(hour_end);
-		$('#date_endmin').val(minute_end);
+		fullcalendarscheduler_div.find('#date_endhour').val(hour_end);
+		fullcalendarscheduler_div.find('#date_endmin').val(minute_end);
 		
 		fullcalendarscheduler_div.find('#fk_resource').val(resource.id).trigger('change');
 	};

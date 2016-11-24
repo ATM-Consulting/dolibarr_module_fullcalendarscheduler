@@ -202,6 +202,9 @@ function getEventForResources($TResource, $date='')
 			while ($i < $num)
 			{
 				$obj = $db->fetch_object($resql);
+				$actioncomm->fetch($obj->fk_actioncomm);
+				$actioncomm->fetch_optionals();
+				
 				// Si traduction existe, on l'utilise, sinon on prend le libelle par defaut
 				//$label=($langs->trans("ResourceTypeShort".$obj->code)!=("ResourceTypeShort".$obj->code)?$langs->trans("ResourceTypeShort".$obj->code):($obj->label!='-'?$obj->label:''));
 				
@@ -244,11 +247,14 @@ function getEventForResources($TResource, $date='')
 					,'start' => !empty($obj->fulldayevent) ? dol_print_date($obj->datep, '%Y-%m-%d') : dol_print_date($obj->datep, '%Y-%m-%dT%H:%M:%S', 'gmt') // TODO
 					,'end' => !empty($obj->fulldayevent) ? dol_print_date($obj->datep2, '%Y-%m-%d') : dol_print_date($obj->datep2, '%Y-%m-%dT%H:%M:%S', 'gmt')
 					,'allDay' => (boolean) $obj->fulldayevent // TODO à voir si on garde pour que l'event aparaisse en haut
+					,'showOptionals' => !empty($extralabels) ? customShowOptionals($actioncomm, $extrafields) : ''
+					,'editOptionals' => !empty($extralabels) ? '<table id="extrafield_to_replace" class="extrafields" width="100%">'.$actioncomm->showOptionals($extrafields, 'edit').'</table>' : ''
 				);
 				
 				foreach ($extralabels as $key => $label)
 				{
-					$TEvent[$i][$key] = $obj->{'extra_'.$key};
+					// J'ajoute les extrafields en tant qu'attibute à titre indicatif
+					$TEvent[$i]['options'][$key] = $obj->{'extra_'.$key};
 				}
 				
 				$i++;
@@ -279,4 +285,33 @@ function getTColorCivility()
 	);
 	
 	return $TColorCivility;
+}
+
+
+function customShowOptionals($object, $extrafields)
+{
+	global $langs;
+	
+	foreach($extrafields->attribute_label as $key=>$label)
+	{
+		$value = $object->array_options["options_".$key];
+		
+		$out .= '<div class="'.$object->element.'_extras_'.$key.'">';
+			
+		// Convert date into timestamp format
+		if (in_array($extrafields->attribute_type[$key],array('date','datetime')))
+		{
+			$value = $object->db->jdate($object->array_options['options_'.$key]);
+		}
+
+		$out .= '<label>'.$langs->trans($label).'</label> : ';
+		$html_id = !empty($object->id) ? $object->element.'_extras_'.$key.'_'.$object->id : '';
+		$out .='<td id="'.$html_id.'" class="'.$object->element.'_extras_'.$key.'">';
+
+		$val_to_show = $extrafields->showOutputField($key,$value);
+		$out .= !empty($val_to_show) ? preg_replace('/<[^>]+>/', ' ', $val_to_show) : '-';
+		$out .= '</div>';
+	}
+	
+	return $out;
 }

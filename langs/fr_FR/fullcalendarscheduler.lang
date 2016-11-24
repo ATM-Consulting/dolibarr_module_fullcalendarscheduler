@@ -11,6 +11,7 @@ tabFullcanlendarschedulerTitle=Vue par ressource
 FULLCALENDARSCHEDULER_LOCALE_LANG=Langue du calendrier (exemple de valeurs : fr, en, es, ...)
 FULLCALENDAR_SCHEDULER_RESOURCES_TYPE_ALLOWED=Type de ressource à afficher dans la vue
 
+FULLCALENDARSCHEDULER_USE_COLOR_FOR_EACH_RESOURCE=Activer l'utilisation des couleurs par ressource
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_START=Heure de début de travail en semaine (ceci n'est qu'à titre informatif, un léger voile gris sera appliqué sur les tranches horaires non travaillées)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEK_END=Heure de fin de travail en semaine (ceci n'est qu'à titre informatif, un léger voile gris sera appliqué sur les tranches horaires non travaillées)
 FULLCALENDARSCHEDULER_BUSINESSHOURS_WEEKEND_START=Heure de début de travail en week-end (ceci n'est qu'à titre informatif, un léger voile gris sera appliqué sur les tranches horaires non travaillées)

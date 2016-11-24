@@ -30,6 +30,8 @@ $morecss = array(
 
 $actioncomm = new ActionComm($db);
 
+$langs->load('main');
+
 llxHeader('', $langs->trans("Agenda"), '', '', 0, 0, $morejs, $morecss);
 $head = calendars_prepare_head(array());
 dol_fiche_head($head, 'perresource', $langs->trans('Agenda'), 0, 'action');
@@ -87,14 +89,15 @@ $form->select_produits('', 'fk_service', 1);
 $select_service = ob_get_clean();
 
 
+$TExtraToPrint = '<table id="extrafield_to_replace" class="extrafields" width="100%">';
+
 $extrafields = new ExtraFields($db);
-// fetch optionals attributes and labels
 $extralabels=$extrafields->fetch_name_optionals_label($actioncomm->table_element);
 if (!empty($extrafields->attribute_label))
 {
-	$TExtraToPrint = '<table class="extrafields" width="100%">'.$actioncomm->showOptionals($extrafields, 'edit').'</table>';
+	$TExtraToPrint.= $actioncomm->showOptionals($extrafields, 'edit');
 }
-
+$TExtraToPrint.= '</table>';
 /**/
 
 echo '
@@ -118,6 +121,7 @@ echo '
 	fullcalendarscheduler_title_dialog_create_event = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_title_dialog_create_event').'";
 	fullcalendarscheduler_title_dialog_update_event = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_title_dialog_update_event').'";
 	fullcalendarscheduler_title_dialog_delete_event = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_title_dialog_delete_event').'";
+	fullcalendarscheduler_title_dialog_show_detail_event = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_title_dialog_show_detail_event').'";
 	fullcalendarscheduler_button_dialog_add = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_add').'";
 	fullcalendarscheduler_button_dialog_update = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_update').'";
 	fullcalendarscheduler_button_dialog_cancel = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_button_dialog_cancel').'";
@@ -137,11 +141,13 @@ echo '
 								.append("<p>"+'.json_encode($select_user).'+"</p>")
 								.append("<p>"+'.json_encode($select_resource).'+"</p>")
 								.append("<p>"+'.json_encode($select_service).'+"</p>")
-								.append("<p>"+'.json_encode($TExtraToPrint).'+"</p>");
-								
+								.append('.json_encode($TExtraToPrint).');					
 								
 	fullcalendarscheduler_picto_delete = "'.addslashes(img_delete()).'";
+	fullcalendarscheduler_picto_detail = "'.addslashes(img_picto($langs->transnoentitiesnoconv('Show'), 'detail.png')).'";
 	fullcalendarscheduler_TColorCivility = '.json_encode(getTColorCivility()).';
+	
+	fullcalendarscheduler_url_event_card = "'.dol_buildpath('/comm/action/card.php', 1).'";
 </script>';
 
 echo '
@@ -150,6 +156,11 @@ echo '
 		position:absolute;
 		top:3px;
 		right:2px;
+	}
+	
+	#fullcalendar_scheduler .ajaxtool_link.need_to_be_adjust img {
+		position:relative;
+		top:-1px;
 	}
 	
 	.ui-dialog { overflow: visible; }

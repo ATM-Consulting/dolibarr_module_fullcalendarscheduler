@@ -9,6 +9,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/date.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/agenda.lib.php';
 
 require_once DOL_DOCUMENT_ROOT.'/resource/class/dolresource.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/lib/functions.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 
 dol_include_once('/fullcalendarscheduler/lib/fullcalendarscheduler.lib.php');
@@ -40,7 +41,7 @@ switch ($put) {
 		__out( $response );
 		break;
 	case 'createOrUpdateEvent':
-		_createOrUpdateEvent($_POST, GETPOST('dateFrom'));
+		_createOrUpdateEvent($_GET, GETPOST('dateFrom'));
 		__out( $response );
 		break;
 	case 'deleteEvent':
@@ -202,6 +203,7 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 	
 	// Initialisation object actioncomm
 	$actioncomm->type_code = $TParam['type_code'];
+	$actioncomm->fk_action = dol_getIdFromCode($db, $TParam['type_code'], 'c_actioncomm');
 	$actioncomm->label = $TParam['label'];
 	$actioncomm->note = $TParam['note'];
 	
