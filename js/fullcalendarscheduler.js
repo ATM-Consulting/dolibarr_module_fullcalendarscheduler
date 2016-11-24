@@ -153,7 +153,6 @@ $(document).ready(function() {
 					}
 					,dateFrom: event.start.format('YYYY-MM-DD')
 				}
-				,
 			}).fail(function(jqXHR, textStatus, errorThrown) {
 				console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
 				revertFunc();
@@ -347,6 +346,8 @@ $(document).ready(function() {
 	};	
 	
 	
+	
+	
 	showEventDialog = function(view, start, end, resource, event)
 	{
 		fullcalendarscheduler_div.dialog({
@@ -361,29 +362,17 @@ $(document).ready(function() {
 						
 						self = this;
 						
+						var dataObject = $('#form_add_event').serializeObject();
+						dataObject.json = 1;
+						dataObject.put = 'createOrUpdateEvent';
+						dataObject.fk_actioncomm = (typeof event !== 'undefined') ? event.id : 0;
+						dataObject.dateFrom = view.start.format('YYYY-MM-DD');
+						
 						$.ajax({
 							url: fullcalendarscheduler_interface
+							,type: 'POST'
 							,dataType: 'json'
-							,data: {
-								json: 1
-								,put: 'createOrUpdateEvent'
-								,TParam: {
-									fk_actioncomm: (typeof event !== 'undefined') ? event.id : 0
-									,type_code: $('#type_code').val()
-									,label: $('#form_add_event input[name=label]').val()
-									//allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
-									,date_start: $('#date_startyear').val()+'-'+$('#date_startmonth').val()+'-'+$('#date_startday').val()+' '+$('#date_starthour').val()+':'+$('#date_startmin').val()+':00'
-									,date_end: $('#date_endyear').val()+'-'+$('#date_endmonth').val()+'-'+$('#date_endday').val()+' '+$('#date_endhour').val()+':'+$('#date_endmin').val()+':00'
-									,note: $('#form_add_event textarea[name=note]').val()
-									,fk_soc: $('#fk_soc').val()
-									,contactid: $('#contactid').val()
-									,fk_user: $('#fk_user').val()
-									,fk_resource: $('#fk_resource').val()
-									,fk_service: $('#fk_service').val()
-								}
-								,dateFrom: view.start.format('YYYY-MM-DD')
-							}
-							,
+							,data: dataObject
 						}).fail(function(jqXHR, textStatus, errorThrown) {
 							console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
 							$( self ).dialog( "close" );
@@ -465,3 +454,20 @@ $(document).ready(function() {
 	};
 	
 });
+
+$.fn.serializeObject = function()
+{
+	var o = {};
+	var a = this.serializeArray();
+	$.each(a, function() {
+		if (o[this.name] !== undefined) {
+			if (!o[this.name].push) {
+				o[this.name] = [o[this.name]];
+			}
+			o[this.name].push(this.value || '');
+		} else {
+			o[this.name] = this.value || '';
+		}
+	});
+	return o;
+};

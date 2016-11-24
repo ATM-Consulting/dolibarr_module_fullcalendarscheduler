@@ -40,7 +40,7 @@ switch ($put) {
 		__out( $response );
 		break;
 	case 'createOrUpdateEvent':
-		_createOrUpdateEvent(GETPOST('TParam', 'array'), GETPOST('dateFrom'));
+		_createOrUpdateEvent($_POST, GETPOST('dateFrom'));
 		__out( $response );
 		break;
 	case 'deleteEvent':
@@ -180,10 +180,10 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 	if (empty($TParam['fk_soc']) || $TParam['fk_soc'] <= 0) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_fk_soc_empty');
 	if (empty($TParam['fk_user'])) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_fk_user_empty');
 	if (empty($TParam['fk_resource'])) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_fk_resource_empty');
-	$date_start = strtotime($TParam['date_start']); // return false si la conversion échoue
-	if (!$date_start) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_date_start_invalid', $TParam['date_start']);
-	$date_end = strtotime($TParam['date_end']); // return false si la conversion échoue
-	if (!$date_end) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_date_end_invalid', $TParam['date_end']);
+	$date_start = dol_mktime($TParam['date_starthour'], $TParam['date_startmin'], 0, $TParam['date_startmonth'], $TParam['date_startday'], $TParam['date_startyear']);
+	if (empty($date_start)) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_date_start_invalid', $TParam['date_start']);
+	$date_end = dol_mktime($TParam['date_endhour'], $TParam['date_endmin'], 0, $TParam['date_endmonth'], $TParam['date_endday'], $TParam['date_endyear']);
+	if (empty($date_end)) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_date_end_invalid', $TParam['date_end']);
 	
 	if (!empty($response->TError))
 	{
@@ -225,6 +225,10 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 	$actioncomm->fk_project = 0;
 	$actioncomm->percentage = -1; // Non application, à faire évoluer potentiellement
 	$actioncomm->duree = 0;
+	
+	$extrafields = new ExtraFields($db);
+	$extralabels = $extrafields->fetch_name_optionals_label($actioncomm->table_element);
+	$extrafields->setOptionalsFromPost($extralabels, $actioncomm);
 	
 	$is_update = 0;
 	
@@ -274,7 +278,8 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 				$TResource = getResourcesAllowed();
 				$TEvent = getEventForResources($TResource, $dateFrom);
 				
-				$response->TSuccess[] = 'Create event and resource linked successful';
+				if ($is_update) $response->TSuccess[] = 'Update event and resource linked successful';
+				else $response->TSuccess[] = 'Create event and resource linked successful';
 				$response->data->TEvent = $TEvent;
 			}
 			else 

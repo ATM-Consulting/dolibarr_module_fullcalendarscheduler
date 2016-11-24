@@ -126,7 +126,7 @@ echo '
 	
 	fullcalendarscheduler_date_format = "'.$langs->trans("FormatDateShortJavaInput").'";
 	
-	fullcalendarscheduler_div = $(\'<div id="form_add_event"></div>\');
+	fullcalendarscheduler_div = $(\'<form id="form_add_event" action="#"></form>\');
 	fullcalendarscheduler_div	.append("<p>"+'.json_encode($select_type_action).'+"</p>")
 								.append("<p>"+'.json_encode($input_title_action).'+"</p>")
 								.append("<p>"+'.json_encode($select_date_start).'+"</p>")

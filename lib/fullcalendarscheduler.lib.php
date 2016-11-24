@@ -159,16 +159,23 @@ function getEventForResources($TResource, $date='')
 	{
 		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
 		require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+		require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
 		
 		$actioncomm = new ActionComm($db);
 		$service = new Product($db);
+		$extrafields = new ExtraFields($db);
+		
+		$extralabels=$extrafields->fetch_name_optionals_label($actioncomm->table_element);
 		
 		if (empty($date)) $date = date('Y-m-d');
 		
-		$sql = 'SELECT a.id as fk_actioncomm, ca.code as type_code, p.rowid as fk_service, p.ref as product_ref, p.fk_product_type as product_type, p.label as product_label';
-		$sql.= ', er.resource_id, a.label, a.note, a.fk_soc, s.nom as company_name, a.datep, a.datep2, a.fulldayevent, er.rowid as fk_element_resource ';
-		//$sql.= ', ';
-		$sql.= ', sp.rowid as fk_socpeople, sp.civility, sp.lastname, sp.firstname, sp.email as contact_email, sp.address as contact_address, sp.zip as contact_zip, sp.town as contact_town, sp.phone_mobile as contact_phone_mobile';
+		$sql = 'SELECT a.id AS fk_actioncomm, ca.code AS type_code, p.rowid AS fk_service, p.ref AS product_ref, p.fk_product_type AS product_type, p.label AS product_label';
+		$sql.= ', er.resource_id, a.label, a.note, a.fk_soc, s.nom AS company_name, a.datep, a.datep2, a.fulldayevent, er.rowid AS fk_element_resource ';
+		$sql.= ', sp.rowid AS fk_socpeople, sp.civility, sp.lastname, sp.firstname, sp.email AS contact_email, sp.address AS contact_address, sp.zip AS contact_zip, sp.town AS contact_town, sp.phone_mobile AS contact_phone_mobile';
+		foreach ($extralabels as $key => $label)
+		{
+			$sql .= ', ae.'.$key.' AS extra_'.$key;
+		}
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_resources er ON (er.element_id = a.id AND er.element_type = "action")';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'resource r ON (er.resource_id = r.rowid)';
@@ -216,7 +223,7 @@ function getEventForResources($TResource, $date='')
 				$service->type = $obj->product_type;
 				
 				// Surtout ne pas mettre de clé en indice, si non, un json encode en sortie est foireux
-				$TEvent[] = array(
+				$TEvent[$i] = array(
 					'id' => $obj->fk_actioncomm
 					,'type_code' => $obj->type_code
 					,'fk_service' => $obj->fk_service
@@ -238,6 +245,11 @@ function getEventForResources($TResource, $date='')
 					,'end' => !empty($obj->fulldayevent) ? dol_print_date($obj->datep2, '%Y-%m-%d') : dol_print_date($obj->datep2, '%Y-%m-%dT%H:%M:%S', 'gmt')
 					,'allDay' => (boolean) $obj->fulldayevent // TODO à voir si on garde pour que l'event aparaisse en haut
 				);
+				
+				foreach ($extralabels as $key => $label)
+				{
+					$TEvent[$i][$key] = $obj->{'extra_'.$key};
+				}
 				
 				$i++;
 			}
