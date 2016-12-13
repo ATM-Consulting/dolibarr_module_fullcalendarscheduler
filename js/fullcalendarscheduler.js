@@ -242,7 +242,7 @@ $(document).ready(function() {
 				// Couleur du bandeau en fonction d'un extrafield lié au produit/service
 				if (typeof event.options_product.fullcalendarscheduler_bg_title != 'undefined')
 				{
-					element.find('.fc-time, .fc-title').css('background', event.options_product.fullcalendarscheduler_bg_title);
+					element.find('.fc-time, .fc-title').css('background', '#'+event.options_product.fullcalendarscheduler_bg_title);
 				}
 				
 				// Couleur du corp en fonction de la typologie client (M, Mme, Mlle ...)
