@@ -164,9 +164,10 @@ function getEventForResources($TResource, $date='')
 		$actioncomm = new ActionComm($db);
 		$service = new Product($db);
 		$extrafields = new ExtraFields($db);
+		$extrafields_service = new ExtraFields($db); // ne pas synthétiser avec la ligne du dessus, sinon les events en vu et en modification rapide affiche les extrafields des produits/services
 		
 		$extralabels=$extrafields->fetch_name_optionals_label($actioncomm->table_element);
-		$extralabels_service=$extrafields->fetch_name_optionals_label($service->table_element);
+		$extralabels_service=$extrafields_service->fetch_name_optionals_label($service->table_element);
 		
 		if (empty($date)) $date = date('Y-m-d');
 		
