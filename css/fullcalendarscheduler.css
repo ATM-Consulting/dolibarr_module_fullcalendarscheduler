@@ -1,3 +1,7 @@
 #fullcalendar_scheduler_mini {
 	margin:10px 0 5px;
 }
+
+#fullcalendar_scheduler_mini td.fc-day, #fullcalendar_scheduler_mini span.fc-day-number {
+	cursor: pointer;
+}
