@@ -232,7 +232,8 @@ $(document).ready(function() {
 				element.find('.fc-content')	.append('<div class="link_thirdparty">'+event.link_company+'</div>')
 											.append('<div class="link_contact">'+event.link_contact+'</div>')
 											.append('<div class="link_service">'+event.link_service+'</div>')
-											.append('<div class="extrafields">'+event.showOptionals+'</div>');
+											.append('<div class="extrafields">'+event.showOptionals+'</div>')
+											.append('<p class="desc">'+event.desc+'</p>');
 				
 				//element.find('.link_thirdparty a, .link_contact a, .link_service a').attr('title', '');
 				element.find('.link_thirdparty a, .link_contact a, .link_service a').tipTip();
