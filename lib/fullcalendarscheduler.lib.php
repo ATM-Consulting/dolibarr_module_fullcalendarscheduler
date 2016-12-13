@@ -166,6 +166,7 @@ function getEventForResources($TResource, $date='')
 		$extrafields = new ExtraFields($db);
 		
 		$extralabels=$extrafields->fetch_name_optionals_label($actioncomm->table_element);
+		$extralabels_service=$extrafields->fetch_name_optionals_label($service->table_element);
 		
 		if (empty($date)) $date = date('Y-m-d');
 		
@@ -176,6 +177,10 @@ function getEventForResources($TResource, $date='')
 		{
 			$sql .= ', ae.'.$key.' AS extra_'.$key;
 		}
+		foreach ($extralabels_service as $key => $label)
+		{
+			$sql .= ', pe.'.$key.' AS extra_p_'.$key;
+		}
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'element_resources er ON (er.element_id = a.id AND er.element_type = "action")';
 		$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'resource r ON (er.resource_id = r.rowid)';
@@ -185,6 +190,7 @@ function getEventForResources($TResource, $date='')
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'element_element ee ON (a.id = ee.fk_target AND ee.targettype = "'.$actioncomm->element.'" AND ee.sourcetype = "'.$service->element.'")';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = ee.fk_source)';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields ae ON (ae.fk_object = a.id)';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_extrafields pe ON (pe.fk_object = p.rowid)';
 		$sql.= ' WHERE a.entity = '.$conf->entity; // TODO à faire évoluer potentiellement vers un getEntity
 		$sql.= ' AND DATE_FORMAT(a.datep, "%Y-%m-%d") = "'.$date.'"';
 		$sql.= ' AND er.resource_id IN ('.implode(',', $TResId).')';
@@ -255,6 +261,11 @@ function getEventForResources($TResource, $date='')
 				{
 					// J'ajoute les extrafields en tant qu'attibute à titre indicatif
 					$TEvent[$i]['options'][$key] = $obj->{'extra_'.$key};
+				}
+				foreach ($extralabels_service as $key => $label)
+				{
+					// J'ajoute les extrafields en tant qu'attibute à titre indicatif
+					$TEvent[$i]['options_product'][$key] = $obj->{'extra_p_'.$key};
 				}
 				
 				$i++;
