@@ -14,6 +14,14 @@ require_once DOL_DOCUMENT_ROOT.'/resource/class/html.formresource.class.php';
 dol_include_once('fullcalendarscheduler/lib/fullcalendarscheduler.lib.php');
 
 $result = restrictedArea($user, 'agenda', 0, '', 'allactions');
+$hookmanager->initHooks(array('agenda', 'fullcalendarscheduler'));
+
+$action='view';
+$object=null;
+
+$parameters = array();
+$reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
+if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
 
 $morejs = array(
 	'/fullcalendarscheduler/js/moment.min.js'
@@ -168,6 +176,10 @@ echo '
 	'.(!empty($conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT) ? '.fc-agendaDay-view tr { height: '.$conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT.'; }' : '').'
 </style>
 ';
+
+$parameters=array();
+$reshook=$hookmanager->executeHooks('addMoreContent', $parameters, $object, $action);
+
 
 dol_fiche_end();
 llxFooter();

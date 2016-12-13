@@ -413,7 +413,7 @@ $(document).ready(function() {
 				// Init fields
 				initEventFormFields(start, end, resource, event);
 			}
-		});
+		}).trigger('fullcalendarscheduler_trigger_show_event_dialog');
 		
 		
 	};
