@@ -80,7 +80,7 @@ $doleditor->Create();
 */
 $input_note = '<textarea name="note" value="" placeholder="'.$langs->trans('Description').'" rows="3" class="minwidth300"></textarea>';
 $options = array(array('method'=>'getContacts', 'url'=>dol_buildpath('/core/ajax/contacts.php',1), 'htmlname'=>'contactid', 'params'=>array('add-customer-contact'=>'disabled')));
-$select_company = '<label for="fk_soc">'.$langs->transnoentitiesnoconv('Company').'</label>'.$form->select_company('', 'fk_soc', '', 1, 0, 0, $options, 0, 'minwidth300');
+$select_company = '<label for="fk_soc">'.$langs->transnoentitiesnoconv('ThirdParty').'</label>'.$form->select_company('', 'fk_soc', '', 1, 0, 0, $options, 0, 'minwidth300');
 
 ob_start();
 echo '<label for="contactid">'.$langs->transnoentitiesnoconv('Contact').'</label>';
