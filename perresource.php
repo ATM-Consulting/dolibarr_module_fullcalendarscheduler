@@ -63,6 +63,8 @@ $select_type_action .= ob_get_clean();
 $input_title_action = '<input type="text" name="label" placeholder="'.$langs->transnoentitiesnoconv('Title').'" style="width:300px" />';
 
 // on intègre la notion de fulldayevent ??? $langs->trans("EventOnFullDay")   <input type="checkbox" id="fullday" name="fullday" '.(GETPOST('fullday')?' checked':'').' />
+$input_fulldayevent = '<label for="fullday">'.$langs->trans("EventOnFullDay").'</label> <input type="checkbox" id="fullday" name="fullday" value="1" />';
+
 ob_start();
 echo '<label>'.$langs->trans("DateActionStart").'</label> ';
 $form->select_date(null,'date_start',1,1,1,"action",1,1,0,0,'fulldaystart');
@@ -141,6 +143,7 @@ echo '
 	fullcalendarscheduler_div = $(\'<form id="form_add_event" action="#"></form>\');
 	fullcalendarscheduler_div	.append("<p>"+'.json_encode($select_type_action).'+"</p>")
 								.append("<p>"+'.json_encode($input_title_action).'+"</p>")
+								.append("<p>"+'.json_encode($input_fulldayevent).'+"</p>")
 								.append("<p>"+'.json_encode($select_date_start).'+"</p>")
 								.append("<p>"+'.json_encode($select_date_end).'+"</p>")
 								.append("<p>"+'.json_encode($input_note).'+"</p>")

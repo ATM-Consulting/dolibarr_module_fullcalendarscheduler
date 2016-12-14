@@ -74,6 +74,7 @@ $(document).ready(function() {
 		minTime: fullcalendarscheduler_minTime, // default 00:00
 		maxTime: fullcalendarscheduler_maxTime, // default 23:00
 		eventOverlap: true,
+		slotDuration:'01:00:00',
 		snapDuration: fullcalendarscheduler_snapDuration,
 		businessHours: [
 			{ // Jours de semaines
@@ -122,7 +123,12 @@ $(document).ready(function() {
 			console.log('select called: ', start.format(), resource ? 'ID res = '+resource.id : '(no resource)');
 			
 			// show form
-			showEventDialog(view, start, end, resource);
+			if (eventAllDayExists(view, {id:0, resourceId:resource.id}))
+			{
+				$.jnotify(fullcalendarscheduler_error_msg_allday_event_exists, 'warning');
+				this.unselect(view, jsEvent); // annule l'affichage du "selectHelper"
+			}
+			else showEventDialog(view, start, end, resource);
 		},
 		dayClick: function(date, jsEvent, view, resource) {
 			console.log('dayClick called: ', date.format(), resource ? 'ID res = '+resource.id : '(no resource)');
@@ -144,6 +150,13 @@ $(document).ready(function() {
 			}
 			else
 			{
+				// Gestion du cas d'erreur si on passe un event du bandeau "allday" sur une plage horaire, l'objet perd son attribut "end"
+				if (event.end == null)
+				{
+					event.end = event.start.clone();
+					event.end.add('hour', 1); // @see "slotDuration" (init à +1 heure)
+				}
+				
 				$.ajax({
 					url: fullcalendarscheduler_interface
 					,dataType: 'json'
@@ -461,6 +474,8 @@ $(document).ready(function() {
 				fullcalendarscheduler_div.find('#extrafield_to_replace').replaceWith(event.editOptionals);
 			}
 			
+			fullcalendarscheduler_div.find('#fullday').prop('checked', event.allDay);
+			disabledHour(fullcalendarscheduler_div.find('#fullday'));
 		}
 		
 		// Format en majuscule pour l'objet moment() si non il renvoie le mauvais format
@@ -470,15 +485,18 @@ $(document).ready(function() {
 		fullcalendarscheduler_div.find('#date_end').val(date);
 		dpChangeDay('date_end', fullcalendarscheduler_date_format);
 		
-		var hour_start = start.format('HH');
-		var minute_start = start.format('mm');
-		fullcalendarscheduler_div.find('#date_starthour').val(hour_start);
-		fullcalendarscheduler_div.find('#date_startmin').val(minute_start);
-		
-		var hour_end = end.format('HH');
-		var minute_end = end.format('mm');
-		fullcalendarscheduler_div.find('#date_endhour').val(hour_end);
-		fullcalendarscheduler_div.find('#date_endmin').val(minute_end);
+		if (typeof event == 'undefined' || !event.allDay)
+		{
+			var hour_start = start.format('HH');
+			var minute_start = start.format('mm');
+			fullcalendarscheduler_div.find('#date_starthour').val(hour_start);
+			fullcalendarscheduler_div.find('#date_startmin').val(minute_start);
+			
+			var hour_end = end.format('HH');
+			var minute_end = end.format('mm');
+			fullcalendarscheduler_div.find('#date_endhour').val(hour_end);
+			fullcalendarscheduler_div.find('#date_endmin').val(minute_end);	
+		}
 		
 		fullcalendarscheduler_div.find('#fk_resource').val(resource.id).trigger('change');
 	};
@@ -500,6 +518,27 @@ $(document).ready(function() {
 		}
 		
 		return event_fullday_found;
+	};
+	
+	fullcalendarscheduler_div.find('#fullday').click(function() {
+		disabledHour(this);
+	});
+	
+	disabledHour = function(input) {
+		if ($(input).is(':checked'))
+		{
+			fullcalendarscheduler_div.find('#date_starthour').val('00').change().attr('disabled', true);
+			fullcalendarscheduler_div.find('#date_startmin').val('00').change().attr('disabled', true);
+			fullcalendarscheduler_div.find('#date_endhour').val('23').change().attr('disabled', true);
+			fullcalendarscheduler_div.find('#date_endmin').val('59').change().attr('disabled', true);
+		}
+		else
+		{
+			fullcalendarscheduler_div.find('#date_starthour').attr('disabled', false);
+			fullcalendarscheduler_div.find('#date_startmin').attr('disabled', false);
+			fullcalendarscheduler_div.find('#date_endhour').attr('disabled', false);
+			fullcalendarscheduler_div.find('#date_endmin').attr('disabled', false);
+		}
 	};
 });
 

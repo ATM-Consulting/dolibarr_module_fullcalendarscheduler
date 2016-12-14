@@ -207,7 +207,7 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 	$actioncomm->label = $TParam['label'];
 	$actioncomm->note = $TParam['note'];
 	
-	$actioncomm->fulldayevent = (int) $TParam['fulldayevent']; // TODO voir si je l'utilise côté client
+	$actioncomm->fulldayevent = (int) $TParam['fullday']; // TODO voir si je l'utilise côté client
 	$actioncomm->datep = $date_start;
 	$actioncomm->datef = $date_end;
 	
