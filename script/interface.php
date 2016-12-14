@@ -215,8 +215,7 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 	$actioncomm->fetch_thirdparty();
 	$actioncomm->societe = $actioncomm->thirdparty;
 	
-	$actioncomm->contact = new Contact($db);
-	if (!empty($TParam['contactid'])) $actioncomm->contact->fetch($TParam['contactid']);
+	if (!empty($TParam['contactid'])) $actioncomm->contactid = $TParam['contactid'];
 	
 	$actioncomm->userownerid = $TParam['fk_user'];
 	$actioncomm->userassigned = array($actioncomm->userownerid=>array('id'=>$actioncomm->userownerid));
