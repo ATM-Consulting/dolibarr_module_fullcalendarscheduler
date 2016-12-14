@@ -364,6 +364,9 @@ $(document).ready(function() {
 	
 	showEventDialog = function(view, start, end, resource, event)
 	{
+		if (typeof event != 'undefined') fullcalendarscheduler_div.data('fk-actioncomm', event.id);
+		else fullcalendarscheduler_div.data('fk-actioncomm', 0);
+		
 		fullcalendarscheduler_div.dialog({
 			modal: true
 			,width: 'auto'
