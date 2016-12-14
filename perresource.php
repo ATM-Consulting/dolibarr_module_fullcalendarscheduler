@@ -156,6 +156,7 @@ echo '
 	fullcalendarscheduler_TColorCivility = '.json_encode(getTColorCivility()).';
 	
 	fullcalendarscheduler_url_event_card = "'.dol_buildpath('/comm/action/card.php', 1).'";
+	fullcalendarscheduler_error_msg_allday_event_exists = "'.$langs->transnoentitiesnoconv('fullcalendarscheduler_error_msg_allday_event_exists').'";
 </script>';
 
 echo '

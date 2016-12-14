@@ -73,7 +73,7 @@ $(document).ready(function() {
 		aspectRatio: fullcalendarscheduler_aspectRatio,
 		minTime: fullcalendarscheduler_minTime, // default 00:00
 		maxTime: fullcalendarscheduler_maxTime, // default 23:00
-		eventOverlap: false,
+		eventOverlap: true,
 		snapDuration: fullcalendarscheduler_snapDuration,
 		businessHours: [
 			{ // Jours de semaines
@@ -136,29 +136,38 @@ $(document).ready(function() {
 		eventDrop: function(event, delta, revertFunc, jsEvent, ui, view) {
 			console.log('eventDrop called and delta is: '+delta.toString(), event);
 			
-			$.ajax({
-				url: fullcalendarscheduler_interface
-				,dataType: 'json'
-				,data: {
-					json: 1
-					,put: 'updateTimeSlotAndResource' // update crénau horaire et ressource associée
-					,event: {
-						id: event.id
-						,allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
-						,resourceId: event.resourceId
-						,fk_element_resource: event.fk_element_resource // il s'agit du rowid de la table "element_resources"
-						,start: event.start.format('YYYY-MM-DD HH:mm:ss')
-						,end: event.end !== null && event.end !== "undefined" ? event.end.format('YYYY-MM-DD HH:mm:ss') : ''
-						,deltaInSecond: delta.asSeconds()
-					}
-					,dateFrom: event.start.format('YYYY-MM-DD')
-				}
-			}).fail(function(jqXHR, textStatus, errorThrown) {
-				console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
+			//TODO vérifier si un event est présent sur la journée
+			if (eventAllDayExists(view, event)) 
+			{
+				$.jnotify(fullcalendarscheduler_error_msg_allday_event_exists, 'warning');
 				revertFunc();
-			}).done(function(response, textStatus, jqXHR) {
-				console.log('Done: ', response);
-			});
+			}
+			else
+			{
+				$.ajax({
+					url: fullcalendarscheduler_interface
+					,dataType: 'json'
+					,data: {
+						json: 1
+						,put: 'updateTimeSlotAndResource' // update crénau horaire et ressource associée
+						,event: {
+							id: event.id
+							,allDay: +event.allDay // event.allDay vos "true" ou "false" et le "+" de devant est là pour convertir en int
+							,resourceId: event.resourceId
+							,fk_element_resource: event.fk_element_resource // il s'agit du rowid de la table "element_resources"
+							,start: event.start.format('YYYY-MM-DD HH:mm:ss')
+							,end: event.end !== null && event.end !== "undefined" ? event.end.format('YYYY-MM-DD HH:mm:ss') : ''
+							,deltaInSecond: delta.asSeconds()
+						}
+						,dateFrom: event.start.format('YYYY-MM-DD')
+					}
+				}).fail(function(jqXHR, textStatus, errorThrown) {
+					console.log('Error: jqXHR, textStatus, errorThrown => ', jqXHR, textStatus, errorThrown);
+					revertFunc();
+				}).done(function(response, textStatus, jqXHR) {
+					console.log('Done: ', response);
+				});	
+			}
 			
 		},
 		/*eventResizeStart: function(event, jsEvent, ui, view) {
@@ -360,8 +369,6 @@ $(document).ready(function() {
 	};	
 	
 	
-	
-	
 	showEventDialog = function(view, start, end, resource, event)
 	{
 		if (typeof event != 'undefined') fullcalendarscheduler_div.data('fk-actioncomm', event.id);
@@ -476,6 +483,24 @@ $(document).ready(function() {
 		fullcalendarscheduler_div.find('#fk_resource').val(resource.id).trigger('change');
 	};
 	
+	
+	eventAllDayExists = function(view, event) {
+		var event_fullday_found = false;
+		var TEventsByResource = view.calendar.getResourceEvents(event.resourceId);
+		for (var i in TEventsByResource)
+		{
+			if (TEventsByResource[i].id != event.id)
+			{
+				if (TEventsByResource[i].allDay)
+				{
+					event_fullday_found = true;
+					break;
+				}
+			}
+		}
+		
+		return event_fullday_found;
+	};
 });
 
 $.fn.serializeObject = function()

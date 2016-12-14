@@ -37,6 +37,7 @@ fullcalendarscheduler_create_event_fk_resource_empty=No resource selected
 fullcalendarscheduler_create_event_date_start_invalid=Date start format invalid: %s
 fullcalendarscheduler_create_event_date_end_invalid=Date end format invalid: %s
 fullcalendarscheduler_create_event_error_fetch=Impossible to modify event, this id [%s] is not present in database
+fullcalendarscheduler_error_msg_allday_event_exists=Action canceled : an all day event exists
 
 fullcalendarscheduler_title_dialog_delete_event=Delete a event
 fullcalendarscheduler_button_dialog_confirm=Confirm

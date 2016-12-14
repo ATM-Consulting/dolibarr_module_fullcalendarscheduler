@@ -37,6 +37,7 @@ fullcalendarscheduler_create_event_fk_resource_empty=Aucune ressource de renseig
 fullcalendarscheduler_create_event_date_start_invalid=Format date de début invalide : %s
 fullcalendarscheduler_create_event_date_end_invalid=Format date de fin invalide : %s
 fullcalendarscheduler_create_event_error_fetch=Modification impossible, l'id [%s] ne correspond à aucun événement en base
+fullcalendarscheduler_error_msg_allday_event_exists=Action annulée : un événement sur la journée est prévu
 
 fullcalendarscheduler_title_dialog_delete_event=Supprimer événement agenda
 fullcalendarscheduler_button_dialog_confirm=Confirmer
