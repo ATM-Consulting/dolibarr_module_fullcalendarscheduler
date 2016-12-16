@@ -452,7 +452,18 @@ $(document).ready(function() {
 		
 	};
 	
-	
+        /* Permet de changer correctement la selection du contact après un chargement ajax sur un .change() du fk_soc */
+        fullcalendarscheduler_div.find('#contactid').bind("DOMNodeInserted",function(e){
+            // Déclanchement de l'action uniquement sur la dernière insertion
+            if ($(e.currentTarget.lastChild).attr('value') == $(e.target).attr('value'))
+            {
+                var fk_socpeople = fullcalendarscheduler_div.find('#contactid').data('fk-socpeople');
+                if (fullcalendarscheduler_div.find('#contactid').children('[value='+fk_socpeople+']').length > 0)
+                    fullcalendarscheduler_div.find('#contactid').val(fk_socpeople).change();
+            }
+            
+        });
+        
 	initEventFormFields = function(start, end, resource, event) {
 		
 		if (typeof event !== 'undefined')
@@ -462,9 +473,7 @@ $(document).ready(function() {
 			fullcalendarscheduler_div.find('textarea[name=note]').val(event.desc);
 			
 			fullcalendarscheduler_div.find('#fk_soc').val(event.fk_soc).trigger('change');
-			setTimeout( function() { // La modification du tiers charge en ajax le contenu du select contact, il faut donc update la selection de celui-ci après
-				fullcalendarscheduler_div.find('#contactid').val(event.fk_socpeople).trigger('change');
-			}, 150);
+			fullcalendarscheduler_div.find('#contactid').data('fk-socpeople', event.fk_socpeople); // Maj via le bind "DOMNodeInserted"
 			
 			fullcalendarscheduler_div.find('#fk_service').val(event.fk_service).trigger('change');
 			fullcalendarscheduler_div.find('#search_fk_service').val(event.product_ref).trigger('change');
