@@ -249,7 +249,7 @@ $(document).ready(function() {
 				var action_delete = '<a class="ajaxtool_link" href="javascript:delete_event('+event.id+');">'+fullcalendarscheduler_picto_delete+'</a>';
 				
 				//fullcalendarscheduler_picto_detail
-				element.find('.fc-content').append('<div class="ajaxtool">'+link_a+' '+action_detail+' '+action_delete+'</div>');
+				element.find('.fc-content').append('<div class="ajaxtool">'+action_detail+' '+action_delete+'</div>');
 				
 				element.find('.fc-content')	.append('<div class="link_thirdparty">'+event.link_company+'</div>')
 											.append('<div class="link_contact">'+event.link_contact+'</div>')
