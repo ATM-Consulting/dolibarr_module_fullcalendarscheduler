@@ -28,7 +28,7 @@ $morejs = array(
 	,'/fullcalendarscheduler/js/fullcalendar.js'
 	,'/fullcalendarscheduler/js/scheduler.min.js' // TODO swap for scheduler.min.js
 	,'/fullcalendarscheduler/js/fullcalendarscheduler.js'
-	,'/fullcalendarscheduler/js/langs/lang-all.js'
+	,'/fullcalendarscheduler/js/langs/locale-all.js'
 );
 $morecss = array(
 	'/fullcalendarscheduler/css/fullcalendarscheduler.css'
