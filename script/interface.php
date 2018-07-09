@@ -1,5 +1,6 @@
 <?php
 if (!defined('INC_FROM_CRON_SCRIPT')) define('INC_FROM_CRON_SCRIPT', true);
+chdir(dirname(__FILE__));
 require('../config.php');
 
 require_once DOL_DOCUMENT_ROOT.'/societe/class/societe.class.php';
@@ -22,11 +23,17 @@ $langs->load('fullcalendarscheduler@fullcalendarscheduler');
 $get = GETPOST('get', 'alpha');
 $put = GETPOST('put', 'alpha');
 
+global $response;
 $response = new interfaceResponse;
 
 switch ($get) {
+	case 'getEventsFromDateAndResource':
 	case 'getEventsFromDate':
 		_getEventsFromDate(GETPOST('dateFrom'));
+		__out( $response );
+		break;
+	case 'getEventsFromDates':
+		_getEventsFromDates(GETPOST('dateStart'), GETPOST('dateEnd'), GETPOST('code'));
 		__out( $response );
 		break;
 }
@@ -50,7 +57,6 @@ switch ($put) {
 		break; 
 }
 
-exit;
 
 /**
  * Fonction de mise à jour de créneau horaire et l'association de la ressource
@@ -68,7 +74,7 @@ function _updateTimeSlotAndResource($event, $dateFrom)
  */
 function _updateResourceLinked($fk_element_resource, $ressourceId)
 {
-	global $db,$user,$response;;
+	global $db,$user,$response;
 	
 	$dolresource = new Dolresource($db);
 	
@@ -148,7 +154,7 @@ function _updateTimeSlot($event, $dateFrom)
 }
 
 /**
- * Function qui retourne le nombre d'events d'un jour donné et ajout à la variable de retour les events 
+ * Function qui retourne le nombre d'events d'un jour donné et ajoute à la variable de retour les events 
  * 
  * @param $dateFrom	date	format Y-m-d
  */
@@ -162,6 +168,99 @@ function _getEventsFromDate($dateFrom)
 	$response->data->TEvent = $TEvent;
 	
 	return count($TEvent);
+}
+
+/**
+ * Fonction qui retourne une liste d'events agenda pour une date ou un plage de date et éventuellement avec un type
+ * @param date $date_s	format Y-m-d H:i:s
+ * @param date $date_e	format Y-m-d H:i:s
+ */
+function _getEventsFromDates($date_s, $date_e='', $c_actioncomm_code='')
+{
+	global $db, $response, $conf;
+	
+	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+	
+	
+	
+	$actioncomm = new ActionComm($db);
+	$extrafields = new ExtraFields($db);
+	$extralabels=$extrafields->fetch_name_optionals_label($actioncomm->table_element);
+	
+	$sql = 'SELECT a.id AS fk_actioncomm, ca.code AS type_code';
+	$sql.= ', a.label, a.note, a.fk_soc, s.nom AS company_name, a.datep, a.datep2, a.fulldayevent';
+	$sql.= ', sp.rowid AS fk_socpeople, sp.civility, sp.lastname, sp.firstname, sp.email AS contact_email, sp.address AS contact_address, sp.zip AS contact_zip, sp.town AS contact_town, sp.phone_mobile AS contact_phone_mobile';
+	foreach ($extralabels as $key => $label)
+	{
+		$sql .= ', ae.'.$key.' AS extra_'.$key;
+	}
+	$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
+	$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_actioncomm ca ON (ca.id = a.fk_action)';
+	
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe s ON (s.rowid = a.fk_soc)';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople sp ON (sp.rowid = a.fk_contact)';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields ae ON (ae.fk_object = a.id)';
+	
+	$sql.= ' WHERE a.entity = '.$conf->entity;
+	if (empty($date_e)) $sql.= ' AND DATE_FORMAT(a.datep, "%Y-%m-%d") = \''.date('Y-m-d', $date_s).'\'';
+	else {
+		$sql.= ' AND a.datep >= '.$db->idate($date_s);
+		$sql.= ' AND a.datep2 <= '.$db->idate($date_e);
+	}
+	if (!empty($c_actioncomm_code)) $sql.= ' AND ca.code = \''.$c_actioncomm_code.'\'';
+	
+	dol_syslog("interface.php::_getEventsFromDates", LOG_DEBUG);
+	$resql = $db->query($sql);
+	if ($resql)
+	{
+		$societe = new Societe($db);
+		$contact = new Contact($db);
+		while ($obj = $db->fetch_object($resql))
+		{
+			$actioncomm->fetch($obj->fk_actioncomm);
+			$actioncomm->fetch_optionals();
+			
+			$societe->id = $obj->fk_soc;
+			$societe->nom = $societe->name = $obj->company_name;
+			
+			$contact->id = $obj->fk_socpeople;
+			$contact->firstname = $obj->firstname;
+			$contact->lastname = $obj->lastname;
+			$contact->email = $obj->contact_email;
+			$contact->phone_mobile = $obj->contact_phone_mobile;
+			$contact->address = $obj->contact_address;
+			$contact->zip = $obj->contact_zip;
+			$contact->town = $obj->contact_town;
+			
+			$response->data->TEvent[] = array(
+				'id' => $obj->fk_actioncomm
+				,'type_code' => $obj->type_code
+				,'title' => $obj->label
+				,'desc' => !empty($obj->note) ? $obj->note : ''
+				,'fk_soc' => $obj->fk_soc
+				,'company_name' => $obj->company_name
+				,'link_company' => !empty($societe->id) ? $societe->getNomUrl(1) : ''
+				,'fk_socpeople' => $obj->fk_socpeople
+				,'contact_civility' => $obj->civility
+				,'contact_lastname' => $obj->lastname
+				,'contact_firstname' => $obj->firstname
+				,'link_contact' => !empty($contact->id) ? $contact->getNomUrl(1) : ''
+				,'start' => !empty($obj->fulldayevent) ? dol_print_date($obj->datep, '%Y-%m-%d') : dol_print_date($obj->datep, '%Y-%m-%dT%H:%M:%S', 'gmt') // TODO
+				,'end' => !empty($obj->fulldayevent) ? dol_print_date($obj->datep2, '%Y-%m-%d') : dol_print_date($obj->datep2, '%Y-%m-%dT%H:%M:%S', 'gmt')
+				,'allDay' => (boolean) $obj->fulldayevent // TODO à voir si on garde pour que l'event aparaisse en haut
+				,'showOptionals' => !empty($extralabels) ? customShowOptionals($actioncomm, $extrafields) : ''
+				,'editOptionals' => !empty($extralabels) ? '<table id="extrafield_to_replace" class="extrafields" width="100%">'.$actioncomm->showOptionals($extrafields, 'edit').'</table>' : ''
+			);
+			
+		}
+		
+		return count($response->data->TEvent);
+	}
+	else
+	{
+		$response->TError[] = $db->lasterror;
+		return 0;
+	}
 }
 
 /**
@@ -337,5 +436,6 @@ class interfaceResponse {
 	public function __construct()
 	{
 		$this->data = new stdClass;
+		$this->data->TEvent = array();
 	}
 }
