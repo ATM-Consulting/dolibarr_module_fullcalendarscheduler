@@ -228,7 +228,7 @@ print '<td align="right" width="300">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_FULLCALENDARSCHEDULER_ROW_HEIGHT">';
-print '<input name="FULLCALENDARSCHEDULER_ROW_HEIGHT" type="text" value="'.$conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT.'" />';
+print '<input name="FULLCALENDARSCHEDULER_ROW_HEIGHT" type="text" value="'.$conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT.'" placeholder="40px" />';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';

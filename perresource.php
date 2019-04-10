@@ -176,8 +176,8 @@ echo '
 	}
 	
 	.ui-dialog { overflow: visible; }
-	
-	'.(!empty($conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT) ? '.fc-agendaDay-view tr { height: '.$conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT.'; }' : '').'
+
+	.fc-agendaDay-view tr { height: '.(! empty($conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT) ? $conf->global->FULLCALENDARSCHEDULER_ROW_HEIGHT : '40px').'; }
 </style>
 ';
 
