@@ -56,7 +56,7 @@ $head = fullcalendarschedulerAdminPrepareHead();
 dol_fiche_head(
     $head,
     'about',
-    $langs->trans("Module104852Name"),
+    $langs->trans("Module104854Name"),
     0,
     'fullcalendarscheduler@fullcalendarscheduler'
 );
