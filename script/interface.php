@@ -1,4 +1,5 @@
 <?php
+if (!defined('NOTOKENRENEWAL')) define('NOTOKENRENEWAL', 1); // Disables token renewal
 if (!defined('INC_FROM_CRON_SCRIPT')) define('INC_FROM_CRON_SCRIPT', true);
 chdir(dirname(__FILE__));
 require('../config.php');
@@ -54,7 +55,7 @@ switch ($put) {
 	case 'deleteEvent':
 		_deleteEvent(GETPOST('fk_actioncomm', 'int'));
 		__out( $response );
-		break; 
+		break;
 }
 
 
@@ -70,21 +71,21 @@ function _updateTimeSlotAndResource($event, $dateFrom)
 
 /**
  * Fonction de mise à jour de l'association de la ressource
- * @return int <0 si erreur, >0 si ok 
+ * @return int <0 si erreur, >0 si ok
  */
 function _updateResourceLinked($fk_element_resource, $ressourceId)
 {
 	global $db,$user,$response;
-	
+
 	$dolresource = new Dolresource($db);
-	
+
 	$res = $dolresource->fetch_element_resource($fk_element_resource);
 	if($res)
 	{
 		$dolresource->resource_id = $ressourceId;
 		//$dolresource->busy = $busy;
 		//$dolresource->mandatory = $mandatory;
-		
+
 		$result = $dolresource->update_element_resource($user);
 		if ($result >= 0)
 		{
@@ -111,7 +112,7 @@ function _updateResourceLinked($fk_element_resource, $ressourceId)
 function _updateTimeSlot($event, $dateFrom)
 {
 	global $db,$langs,$user,$response,$conf;
-	
+
 	$actioncomm = new ActionComm($db);
 	if ($actioncomm->fetch($event->id) > 0)
 	{
@@ -119,7 +120,7 @@ function _updateTimeSlot($event, $dateFrom)
 		if (!empty($event->allDay))
 		{
 			$timeFrom = strtotime($dateFrom);
-			
+
 			$actioncomm->fulldayevent = 1;
 			$actioncomm->datep = dol_mktime(0, 0, 0, date('m', $timeFrom), date('d', $timeFrom), date('Y', $timeFrom));
 			$actioncomm->datef = dol_mktime(23, 59, 0, date('m', $timeFrom), date('d', $timeFrom), date('Y', $timeFrom));
@@ -127,14 +128,14 @@ function _updateTimeSlot($event, $dateFrom)
 		else
 		{
 			$actioncomm->fulldayevent = 0;
-			
+
 			$timep = strtotime($event->start);
 			$actioncomm->datep = dol_mktime(date('H', $timep), date('i', $timep), 0, date('m', $timep), date('d', $timep), date('Y', $timep));
-			
+
 			$timef = strtotime($event->end);
 			$actioncomm->datef = dol_mktime(date('H', $timef), date('i', $timef), 0, date('m', $timef), date('d', $timef), date('Y', $timef));
 		}
-		
+
 		if ($actioncomm->update($user) > 0)
 		{
 			$response->TSuccess[] = 'Update Time slot successful';
@@ -146,7 +147,7 @@ function _updateTimeSlot($event, $dateFrom)
 			return -1;
 		}
 	}
-	else 
+	else
 	{
 		$response->TError[] = $actioncomm->error;
 		return -2;
@@ -154,19 +155,19 @@ function _updateTimeSlot($event, $dateFrom)
 }
 
 /**
- * Function qui retourne le nombre d'events d'un jour donné et ajoute à la variable de retour les events 
- * 
+ * Function qui retourne le nombre d'events d'un jour donné et ajoute à la variable de retour les events
+ *
  * @param $dateFrom	date	format Y-m-d
  */
 function _getEventsFromDate($dateFrom)
 {
 	global $response;
-	
+
 	$TResource = getResourcesAllowed();
 	$TEvent = getEventForResources($TResource, $dateFrom);
-	
+
 	$response->data->TEvent = $TEvent;
-	
+
 	return count($TEvent);
 }
 
@@ -178,15 +179,15 @@ function _getEventsFromDate($dateFrom)
 function _getEventsFromDates($date_s, $date_e='', $c_actioncomm_code='')
 {
 	global $db, $response, $conf;
-	
+
 	require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-	
-	
-	
+
+
+
 	$actioncomm = new ActionComm($db);
 	$extrafields = new ExtraFields($db);
 	$extralabels=$extrafields->fetch_name_optionals_label($actioncomm->table_element);
-	
+
 	$sql = 'SELECT a.id AS fk_actioncomm, ca.code AS type_code';
 	$sql.= ', a.label, a.note, a.fk_soc, s.nom AS company_name, a.datep, a.datep2, a.fulldayevent';
 	$sql.= ', sp.rowid AS fk_socpeople, sp.civility, sp.lastname, sp.firstname, sp.email AS contact_email, sp.address AS contact_address, sp.zip AS contact_zip, sp.town AS contact_town, sp.phone_mobile AS contact_phone_mobile';
@@ -196,11 +197,11 @@ function _getEventsFromDates($date_s, $date_e='', $c_actioncomm_code='')
 	}
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm a';
 	$sql.= ' INNER JOIN '.MAIN_DB_PREFIX.'c_actioncomm ca ON (ca.id = a.fk_action)';
-	
+
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe s ON (s.rowid = a.fk_soc)';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'socpeople sp ON (sp.rowid = a.fk_contact)';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'actioncomm_extrafields ae ON (ae.fk_object = a.id)';
-	
+
 	$sql.= ' WHERE a.entity = '.$conf->entity;
 	if (empty($date_e)) $sql.= ' AND DATE_FORMAT(a.datep, "%Y-%m-%d") = \''.date('Y-m-d', $date_s).'\'';
 	else {
@@ -208,7 +209,7 @@ function _getEventsFromDates($date_s, $date_e='', $c_actioncomm_code='')
 		$sql.= ' AND a.datep2 <= '.$db->idate($date_e);
 	}
 	if (!empty($c_actioncomm_code)) $sql.= ' AND ca.code = \''.$c_actioncomm_code.'\'';
-	
+
 	dol_syslog("interface.php::_getEventsFromDates", LOG_DEBUG);
 	$resql = $db->query($sql);
 	if ($resql)
@@ -219,10 +220,10 @@ function _getEventsFromDates($date_s, $date_e='', $c_actioncomm_code='')
 		{
 			$actioncomm->fetch($obj->fk_actioncomm);
 			$actioncomm->fetch_optionals();
-			
+
 			$societe->id = $obj->fk_soc;
 			$societe->nom = $societe->name = $obj->company_name;
-			
+
 			$contact->id = $obj->fk_socpeople;
 			$contact->firstname = $obj->firstname;
 			$contact->lastname = $obj->lastname;
@@ -231,7 +232,7 @@ function _getEventsFromDates($date_s, $date_e='', $c_actioncomm_code='')
 			$contact->address = $obj->contact_address;
 			$contact->zip = $obj->contact_zip;
 			$contact->town = $obj->contact_town;
-			
+
 			$response->data->TEvent[] = array(
 				'id' => $obj->fk_actioncomm
 				,'type_code' => $obj->type_code
@@ -251,9 +252,9 @@ function _getEventsFromDates($date_s, $date_e='', $c_actioncomm_code='')
 				,'showOptionals' => !empty($extralabels) ? customShowOptionals($actioncomm, $extrafields) : ''
 				,'editOptionals' => !empty($extralabels) ? '<table id="extrafield_to_replace" class="extrafields" width="100%">'.$actioncomm->showOptionals($extrafields, 'edit').'</table>' : ''
 			);
-			
+
 		}
-		
+
 		return count($response->data->TEvent);
 	}
 	else
@@ -265,16 +266,16 @@ function _getEventsFromDates($date_s, $date_e='', $c_actioncomm_code='')
 
 /**
  * Fonction qui créé ou maj un événement agenda et le retourne
- * 
+ *
  * @param $TParam	array
  */
 function _createOrUpdateEvent($TParam, $dateFrom)
 {
 	global $db, $response, $langs, $user;
-	
+
 	$TParam['label'] = trim( $TParam['label']);
 	$TParam['note'] = trim( $TParam['note']);
-	
+
 	if (empty($TParam['type_code'])) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_type_code_empty');
 	if (empty($TParam['label'])) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_label_empty');
 	if (empty($TParam['fk_soc']) || $TParam['fk_soc'] <= 0) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_fk_soc_empty');
@@ -284,12 +285,12 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 	if (empty($date_start)) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_date_start_invalid', $TParam['date_start']);
 	$date_end = dol_mktime($TParam['date_endhour'], $TParam['date_endmin'], 0, $TParam['date_endmonth'], $TParam['date_endday'], $TParam['date_endyear']);
 	if (empty($date_end)) $response->TError[] = $langs->transnoentitiesnoconv('fullcalendarscheduler_create_event_date_end_invalid', $TParam['date_end']);
-	
+
 	if (!empty($response->TError))
 	{
 		return -1;
 	}
-	
+
 	$actioncomm = new Actioncomm($db);
 	if (!empty($TParam['fk_actioncomm']))
 	{
@@ -299,43 +300,43 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 			return -5;
 		}
 	}
-	
+
 	// Initialisation object actioncomm
 	$actioncomm->type_code = $TParam['type_code'];
 	$actioncomm->fk_action = dol_getIdFromCode($db, $TParam['type_code'], 'c_actioncomm');
 	$actioncomm->label = $TParam['label'];
 	$actioncomm->note = $TParam['note'];
-	
+
 	$actioncomm->fulldayevent = (int) $TParam['fullday']; // TODO voir si je l'utilise côté client
 	$actioncomm->datep = $date_start;
 	$actioncomm->datef = $date_end;
-	
+
 	$actioncomm->socid = $TParam['fk_soc'];
 	$actioncomm->fetch_thirdparty();
 	$actioncomm->societe = $actioncomm->thirdparty;
-	
+
 	if (!empty($TParam['contactid'])) $actioncomm->contactid = $TParam['contactid'];
-	
+
 	$actioncomm->userownerid = $TParam['fk_user'];
 	$actioncomm->userassigned = array($actioncomm->userownerid=>array('id'=>$actioncomm->userownerid));
-	
+
 	// Autres params que je n'utilise pas
 	$actioncomm->priority = 0;
 	$actioncomm->location = '';
 	$actioncomm->fk_project = 0;
 	$actioncomm->percentage = -1; // Non application, à faire évoluer potentiellement
 	$actioncomm->duree = 0;
-	
+
 	$extrafields = new ExtraFields($db);
 	$extralabels = $extrafields->fetch_name_optionals_label($actioncomm->table_element);
 	$extrafields->setOptionalsFromPost($extralabels, $actioncomm);
-	
+
 	$is_update = 0;
-	
+
 	$db->begin(); // Gestion de la transaction à ce niveau car je doit, après création de l'event, associer la ressource
 	if (empty($actioncomm->id)) $res = $actioncomm->create($user);
 	else $is_update = $res = $actioncomm->update($user);
-	
+
 	if ($res > 0)
 	{
 		if (!$actioncomm->error)
@@ -344,7 +345,7 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 			{
 				$service = new product($db);
 				$actioncomm->fetchObjectLinked('', $service->element);
-				if (!empty($actioncomm->linkedObjectsIds)) 
+				if (!empty($actioncomm->linkedObjectsIds))
 				{
 					foreach ($actioncomm->linkedObjectsIds as $fk_element_element => $fk_product) $actioncomm->deleteObjectLinked('', '', '', '', $fk_element_element);
 				}
@@ -355,7 +356,7 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 					return -6;
 				}
 			}
-			
+
 			// TODO à faire évoluer si nécessaire
 			// Si je suis dans le cas d'un update, alors je supprime l'association à la ressource précédente puis je fait mon ajout (méthode un peu brutale car j'empèche l'association à plusieurs ressources, le module n'est pas prévus pour ça si non il faut valoriser en amont l'attribut "resourceIds")
 			if ($is_update)
@@ -370,19 +371,19 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 					}
 				}
 			}
-			
+
 			$res = $actioncomm->add_element_resource($TParam['fk_resource'], 'dolresource');
 			if ($res)
 			{
 				$db->commit();
 				$TResource = getResourcesAllowed();
 				$TEvent = getEventForResources($TResource, $dateFrom);
-				
+
 				if ($is_update) $response->TSuccess[] = 'Update event and resource linked successful';
 				else $response->TSuccess[] = 'Create event and resource linked successful';
 				$response->data->TEvent = $TEvent;
 			}
-			else 
+			else
 			{
 				$db->rollback();
 				$response->TError[] = $actioncomm->error;
@@ -392,7 +393,7 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 		else
 		{
 			$db->rollback();
-			$response->TError[] = $actioncomm->error; // Pour respecter le traitement d'erreur standard il faut peut être ajouter un $langs->transnoentitiesnoconv() 
+			$response->TError[] = $actioncomm->error; // Pour respecter le traitement d'erreur standard il faut peut être ajouter un $langs->transnoentitiesnoconv()
 			return -3;
 		}
 	}
@@ -403,13 +404,13 @@ function _createOrUpdateEvent($TParam, $dateFrom)
 		if (!empty($actioncomm->errors)) array_merge($response->TError, $actioncomm->errors);
 		return -2;
 	}
-	
+
 }
 
 function _deleteEvent($fk_actioncomm)
 {
 	global $db,$response;
-	
+
 	$actioncomm = new Actioncomm($db);
 	if ($actioncomm->fetch($fk_actioncomm) > 0)
 	{
@@ -417,7 +418,7 @@ function _deleteEvent($fk_actioncomm)
 		{
 			$response->TSuccess[] = 'Delete event id = '.$fk_actioncomm.' successful';
 		}
-		else 
+		else
 		{
 			$response->TError[] = $actioncomm->error;
 		}
@@ -432,7 +433,7 @@ class interfaceResponse {
 	public $TSuccess = array();
 	public $TError = array();
 	public $data; // object qui contiendra des données pour le traitement côté JS
-	
+
 	public function __construct()
 	{
 		$this->data = new stdClass;
