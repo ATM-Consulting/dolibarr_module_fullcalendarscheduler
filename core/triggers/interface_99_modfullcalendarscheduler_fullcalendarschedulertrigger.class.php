@@ -48,7 +48,7 @@ class Interfacefullcalendarschedulertrigger
         $this->db = $db;
 
         $this->name = preg_replace('/^Interface/i', '', get_class($this));
-        $this->family = "demo";
+        $this->family = "ATM Consulting - Agefodd";
         $this->description = "Triggers of this module are empty functions."
             . "They have no effect."
             . "They are provided for tutorial purpose only.";
